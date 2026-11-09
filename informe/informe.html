@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>ACA Arquitectura de Software — Sistema de Gestión Académica</title>
+<style>
+  @page { size: Letter; margin: 2.2cm 2.2cm 2.2cm 2.2cm; }
+  * { box-sizing: border-box; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 10.6pt; line-height: 1.45; color: #1b1b1b; margin: 0; }
+  h1 { font-size: 16pt; color: #0b3d6e; border-bottom: 2.5px solid #0b3d6e; padding-bottom: 4px; margin: 0 0 12px; page-break-after: avoid; }
+  h2 { font-size: 12.5pt; color: #0b3d6e; margin: 18px 0 6px; page-break-after: avoid; }
+  h3 { font-size: 11pt; color: #333; margin: 12px 0 4px; page-break-after: avoid; }
+  p { margin: 0 0 7px; text-align: justify; }
+  ul, ol { margin: 2px 0 8px 0; padding-left: 20px; }
+  li { margin-bottom: 2px; }
+  .section { page-break-before: always; }
+  table { width: 100%; border-collapse: collapse; margin: 6px 0 12px; font-size: 9pt; page-break-inside: auto; }
+  thead { display: table-header-group; }
+  tr { page-break-inside: avoid; }
+  th { background: #0b3d6e; color: #fff; text-align: left; padding: 4px 6px; font-weight: bold; }
+  table.ids td:first-child, #matriz td:nth-child(4) { white-space: nowrap; }
+  .cover td:first-child { white-space: normal; }
+  td { border: 1px solid #c9d3df; padding: 4px 6px; vertical-align: top; }
+  tr:nth-child(even) td { background: #f5f8fb; }
+  .small { font-size: 8.6pt; }
+  .fig { text-align: center; margin: 8px 0 14px; page-break-inside: avoid; }
+  .fig img { max-width: 100%; border: 1px solid #dde3ea; }
+  .fig .cap { font-size: 9pt; color: #333; margin-top: 4px; }
+  .fig .cap b { color: #0b3d6e; }
+  .ev { text-align:center; margin: 6px 0 12px; page-break-inside: avoid; }
+  .ev img { max-width: 88%; max-height: 10.5cm; border: 1px solid #c9d3df; }
+  .ev .cap { font-size: 8.8pt; color:#333; margin-top:3px; }
+  .ev .cap b { color:#0b3d6e; }
+  .note { background: #eef4ff; border-left: 4px solid #2f5597; padding: 7px 10px; margin: 8px 0 12px; font-size: 9.6pt; }
+  .todo { background: #fff3b0; border: 1.5px dashed #b8860b; padding: 7px 10px; margin: 8px 0 12px; font-size: 9.6pt; }
+  .ph { background: #fff3b0; padding: 0 3px; }
+  .shot { border: 2px dashed #b8860b; background: #fffbe6; height: 120px; display: flex; align-items: center; justify-content: center; color: #8a6d00; font-size: 9.5pt; margin: 6px 0 10px; text-align: center; }
+  pre, .prompt { font-family: "DejaVu Sans Mono", Consolas, monospace; font-size: 8.4pt; background: #f4f4f4; border: 1px solid #ddd; padding: 7px 9px; white-space: pre-wrap; margin: 4px 0 10px; line-height: 1.35; page-break-inside: avoid; }
+  code { font-family: "DejaVu Sans Mono", Consolas, monospace; font-size: 8.8pt; background: #f1f1f1; padding: 0 2px; }
+  .adr { border: 1px solid #c9d3df; border-left: 5px solid #0b3d6e; padding: 7px 11px; margin: 8px 0 12px; page-break-inside: avoid; }
+  .adr h3 { margin-top: 0; color: #0b3d6e; }
+  .adr p { margin-bottom: 4px; }
+  .tag { display: inline-block; font-size: 8pt; padding: 0 5px; border-radius: 3px; color: #fff; }
+  .ok { background: #2e7d32; } .mod { background: #b8860b; } .no { background: #b71c1c; }
+  /* Portada */
+  .cover { height: 23.2cm; display: flex; flex-direction: column; text-align: center; }
+  .cover img.logo { width: 6.2cm; margin: 0.4cm auto 0.6cm; }
+  .cover .inst { font-size: 12pt; font-weight: bold; color: #0b3d6e; }
+  .cover .sub { font-size: 10.5pt; color: #444; margin-top: 3px; }
+  .cover .title { font-size: 21pt; font-weight: bold; color: #0b3d6e; margin: 1.6cm 0 0.4cm; line-height: 1.2; }
+  .cover .stitle { font-size: 12.5pt; color: #333; margin-bottom: 1.4cm; }
+  .cover table { width: 78%; margin: 0 auto; font-size: 10.5pt; }
+  .cover td { border: none; border-bottom: 1px solid #c9d3df; padding: 6px 4px; background: none !important; }
+  .cover td:first-child { font-weight: bold; color: #0b3d6e; width: 34%; }
+  .cover .bottom { margin-top: auto; font-size: 10.5pt; color: #333; }
+  .toc { font-size: 10.3pt; }
+  .toc div { display: flex; border-bottom: 1px dotted #aaa; padding: 3px 0; }
+  .toc div span:first-child { flex: 1; }
+  .toc .l2 { padding-left: 18px; font-size: 9.6pt; color: #333; }
+  .refs p { padding-left: 1.27cm; text-indent: -1.27cm; text-align: left; }
+  .two { display: flex; gap: 14px; } .two > div { flex: 1; }
+</style>
+</head>
+<body>
+
+<!-- ============================ PORTADA ============================ -->
+<div class="cover">
+  <img class="logo" src="../logo/cun.png" alt="Logo CUN">
+  <div class="inst">Corporación Unificada Nacional de Educación Superior — CUN</div>
+  <div class="sub">Educación Virtual · Actividad de Aprendizaje (ACA) · Semanas 3, 4, 5 y 6</div>
+  <div class="title">Diseño de la arquitectura de software de un<br>Sistema de Gestión Académica (SGA)</div>
+  <div class="stitle">Requerimientos, modelos del sistema, trazabilidad y análisis crítico<br>con apoyo de Google AI Studio</div>
+  <table>
+    <tr><td>Asignatura</td><td>Arquitectura de Software</td></tr>
+    <tr><td>Estudiante</td><td>Jhonnathan Brandon Galvis Landinez</td></tr>
+    <tr><td>Docente</td><td>Alexander Calderón Martínez</td></tr>
+    <tr><td>Grupo / NRC</td><td>55536</td></tr>
+    <tr><td>Fecha</td><td>8 de noviembre de 2026</td></tr>
+  </table>
+  <div class="bottom">Colombia · 2026</div>
+</div>
+
+<!-- ============================ CONTENIDO ============================ -->
+<div class="section toc">
+  <h1>Contenido</h1>
+  <div><span>1. Introducción y descripción del problema</span><span>3</span></div>
+  <div><span>2. Objetivos</span><span>3</span></div>
+  <div><span>3. Alcance, actores, supuestos, restricciones y reglas de negocio</span><span>5</span></div>
+  <div><span>4. Requerimientos funcionales y no funcionales: listado y análisis</span><span>8</span></div>
+  <div><span>5. Arquitectura seleccionada: descripción y justificación</span><span>11</span></div>
+  <div><span>6. Modelo del sistema</span><span>15</span></div>
+  <div class="l2"><span>6.1 Modelo de casos de uso</span><span>15</span></div>
+  <div class="l2"><span>6.2 Modelo de componentes / vista lógica</span><span>18</span></div>
+  <div class="l2"><span>6.3 Modelo de despliegue</span><span>20</span></div>
+  <div class="l2"><span>6.4 Modelo de datos conceptual</span><span>22</span></div>
+  <div class="l2"><span>6.5 Vistas de secuencia</span><span>24</span></div>
+  <div><span>7. Matriz de trazabilidad de requerimientos</span><span>26</span></div>
+  <div><span>8. Decisiones arquitectónicas, atributos de calidad y análisis de riesgos</span><span>28</span></div>
+  <div><span>9. Evidencias del uso de Google AI Studio</span><span>33</span></div>
+  <div><span>10. Video pitch y repositorio</span><span>49</span></div>
+  <div><span>11. Conclusiones y recomendaciones</span><span>49</span></div>
+  <div><span>12. Referencias (APA 7.ª edición)</span><span>51</span></div>
+  <p class="small" style="margin-top:14px">Los números de página son de referencia. Archivos fuente de los diagramas: carpeta <code>diagramas/</code> del repositorio (formatos <code>.dot</code>, <code>.mmd</code>, <code>.svg</code> y <code>.png</code>).</p>
+</div>
+
+<!-- ============================ 1 ============================ -->
+<div class="section">
+<h1>1. Introducción y descripción del problema</h1>
+<p>Una institución de educación superior administra hoy la información de estudiantes, docentes, programas, asignaturas, grupos, matrículas, calificaciones y horarios en archivos y aplicaciones independientes. Esta fragmentación produce tres problemas concretos que el caso describe: <b>duplicidad de datos</b> (el mismo estudiante o asignatura existe en varias fuentes con valores distintos), <b>demoras en la consulta</b> (no hay un único punto de acceso ni índices sobre los datos) y <b>pérdida de trazabilidad</b> (no es posible saber quién modificó una nota o una matrícula, ni cuándo).</p>
+<p>Este informe propone la arquitectura de software de un <b>Sistema de Gestión Académica (SGA)</b> web que centraliza esa información, controla el acceso por roles y deja registro auditable de las operaciones sensibles. El trabajo no implementa el sistema completo: produce una arquitectura sustentada en los 12 requerimientos funcionales (RF) y 12 no funcionales (RNF) del enunciado, los modelos del sistema exigidos (casos de uso, componentes, despliegue, datos y secuencia), una matriz de trazabilidad con su método de verificación y un análisis crítico de riesgos.</p>
+<p>La propuesta se construyó con apoyo de <b>Google AI Studio</b>, usado como asistente para generar alternativas y borradores; cada sugerencia se contrastó contra los requerimientos y se aceptó, modificó o descartó con una justificación explícita (sección 9). La decisión de estilo arquitectónico se argumenta frente al tamaño, la complejidad y los atributos de calidad del sistema, no por recomendación de la herramienta.</p>
+<div class="note"><b>Capacidades propuestas vs. implementadas.</b> Todo lo descrito en este documento es una <b>propuesta de diseño</b>. Ningún componente ha sido implementado ni probado en producción; las métricas (por ejemplo, 3 s con 300 usuarios) son objetivos de diseño con un método de verificación propuesto en la matriz de trazabilidad, no resultados medidos.</div>
+
+<h1 style="margin-top:22px">2. Objetivos</h1>
+<h2>2.1 Objetivo general</h2>
+<p>Diseñar y modelar la arquitectura de software de un Sistema de Gestión Académica web, seguro, mantenible, escalable y accesible, que satisfaga los requerimientos funcionales y no funcionales planteados y cuyas decisiones queden justificadas y trazadas hasta los componentes que las implementan.</p>
+<h2>2.2 Objetivos específicos</h2>
+<ol>
+  <li>Analizar el contexto del caso y especificar los RF y RNF de forma verificable, identificando actores, supuestos, restricciones y reglas de negocio.</li>
+  <li>Seleccionar y justificar un estilo arquitectónico comparando al menos tres alternativas (capas, monolito modular y microservicios) frente a los atributos de calidad.</li>
+  <li>Elaborar los modelos de casos de uso, componentes, despliegue, datos conceptual y secuencia con nombres y relaciones consistentes entre sí.</li>
+  <li>Construir una matriz de trazabilidad que relacione cada RF y RNF con componentes, modelos, decisiones y un método de verificación.</li>
+  <li>Identificar riesgos, puntos únicos de falla, amenazas de seguridad y límites de escalabilidad, y documentar las decisiones arquitectónicas principales.</li>
+  <li>Usar Google AI Studio de forma crítica, documentando prompts, respuestas y los ajustes realizados por el autor.</li>
+</ol>
+</div>
+
+<!-- ============================ 3 ============================ -->
+<div class="section">
+<h1>3. Alcance, actores, supuestos, restricciones y reglas de negocio</h1>
+<h2>3.1 Alcance</h2>
+<div class="two">
+<div>
+<p><b>Dentro del alcance</b></p>
+<ul>
+  <li>Autenticación, roles y permisos (administrador, coordinador académico, docente, estudiante).</li>
+  <li>Gestión de estudiantes, docentes, programas, planes de estudio y asignaturas.</li>
+  <li>Configuración de periodos, grupos, cupos, docentes, horarios y aulas o enlaces.</li>
+  <li>Matrícula con validación de cupo y duplicidad.</li>
+  <li>Registro, actualización y publicación de calificaciones.</li>
+  <li>Consulta del estudiante, reportes básicos, búsqueda y filtros.</li>
+  <li>Auditoría de eventos relevantes, respaldo y recuperación.</li>
+  <li>API REST documentada para integración futura.</li>
+</ul>
+</div>
+<div>
+<p><b>Fuera del alcance</b></p>
+<ul>
+  <li>Pagos, liquidación de matrícula financiera y facturación.</li>
+  <li>Admisiones e inscripción de aspirantes.</li>
+  <li>Aula virtual / LMS (contenidos, entregas, foros).</li>
+  <li>Aplicación móvil nativa (se cubre con web adaptable).</li>
+  <li>Generación de certificados con firma digital.</li>
+  <li>Migración detallada de los datos existentes (se deja como riesgo y recomendación).</li>
+  <li>Implementación completa del sistema (el enunciado no la exige).</li>
+</ul>
+</div>
+</div>
+
+<h2>3.2 Actores</h2>
+<table>
+<thead><tr><th style="width:20%">Actor</th><th style="width:12%">Tipo</th><th>Responsabilidades y objetivos en el SGA</th></tr></thead>
+<tr><td><b>Administrador</b></td><td>Primario</td><td>Gestiona usuarios, roles y permisos; registra y desactiva estudiantes y docentes; consulta la bitácora de auditoría; genera reportes institucionales.</td></tr>
+<tr><td><b>Coordinador académico</b></td><td>Primario</td><td>Define programas, planes y asignaturas; configura periodos, grupos, cupos, horarios y docentes asignados; realiza o asiste matrículas; genera reportes por programa y periodo.</td></tr>
+<tr><td><b>Docente</b></td><td>Primario</td><td>Consulta los grupos que dicta; registra, actualiza y publica calificaciones de sus estudiantes matriculados.</td></tr>
+<tr><td><b>Estudiante</b></td><td>Primario</td><td>Se matricula en la ventana habilitada; consulta asignaturas matriculadas, horario y calificaciones publicadas.</td></tr>
+<tr><td>Plataformas institucionales</td><td>Secundario (futuro)</td><td>Consumen la API REST (por ejemplo, LMS, financiera, SSO institucional). No forman parte del alcance actual pero condicionan la decisión de interoperabilidad (RNF-08).</td></tr>
+<tr><td>Reloj del sistema / tareas programadas</td><td>Secundario</td><td>Dispara respaldos, cierre automático de ventanas de matrícula y procesamiento de la cola de eventos de auditoría.</td></tr>
+</table>
+
+<h2>3.3 Supuestos</h2>
+<table class="ids">
+<thead><tr><th style="width:9%">ID</th><th>Supuesto</th><th style="width:33%">Impacto si es falso</th></tr></thead>
+<tr><td>S-01</td><td>El escenario de referencia es de hasta 300 usuarios concurrentes (RNF-02), con picos al abrir la matrícula.</td><td>Si la institución es mucho mayor, se escala horizontalmente la API y se separan lecturas (sección 8.5).</td></tr>
+<tr><td>S-02</td><td>La escala de calificación es 0,0 a 5,0 y una nota final se compone de componentes con porcentajes que suman 100 %.</td><td>Cambia solo la regla de validación del módulo Calificaciones.</td></tr>
+<tr><td>S-03</td><td>La matrícula la puede realizar el coordinador o el propio estudiante dentro de una ventana habilitada por periodo.</td><td>Si solo la hace el coordinador, se retira el permiso al rol estudiante sin cambiar la arquitectura.</td></tr>
+<tr><td>S-04</td><td>El sistema se despliega en un proveedor de nube con al menos dos zonas de disponibilidad y servicio de almacenamiento de objetos.</td><td>En un centro de datos propio se requiere replicar manualmente la redundancia; sube el riesgo de disponibilidad.</td></tr>
+<tr><td>S-05</td><td>El equipo de desarrollo domina C#/.NET y Angular.</td><td>El estilo arquitectónico se mantiene; solo cambia la pila tecnológica (por ejemplo, Spring Boot o NestJS).</td></tr>
+<tr><td>S-06</td><td>La autenticación es propia del SGA en esta fase; la integración con SSO institucional (OIDC) es futura.</td><td>Si ya existe un proveedor de identidad, el módulo IAM delega el login y conserva solo la autorización.</td></tr>
+</table>
+
+<h2>3.4 Restricciones</h2>
+<ul>
+  <li><b>R-01 Acceso web:</b> la solución debe ser accesible desde navegadores recientes de uso común y adaptarse a pantallas de computador y móvil (RNF-06, RNF-12).</li>
+  <li><b>R-02 Seguridad mínima obligatoria:</b> HTTPS en todas las comunicaciones, contraseñas sin texto plano y control por roles (RNF-01).</li>
+  <li><b>R-03 Interfaz de integración:</b> preferiblemente API REST documentada (RNF-08).</li>
+  <li><b>R-04 Normativa:</b> tratamiento de datos personales conforme a la Ley 1581 de 2012 de Colombia (refuerza RNF-11).</li>
+  <li><b>R-05 Académica:</b> no se exige implementar el sistema completo; el entregable es la arquitectura y sus modelos. No se usan datos personales reales ni credenciales en prompts, capturas o repositorios.</li>
+  <li><b>R-06 Presupuesto:</b> contexto institucional con presupuesto limitado; se privilegian componentes de código abierto y servicios administrados de bajo costo.</li>
+</ul>
+
+<h2>3.5 Reglas de negocio</h2>
+<table class="ids">
+<thead><tr><th style="width:9%">ID</th><th>Regla</th><th style="width:16%">Origen</th></tr></thead>
+<tr><td>RN-01</td><td>Un estudiante no puede tener dos matrículas activas en la misma asignatura dentro del mismo periodo.</td><td>RF-07</td></tr>
+<tr><td>RN-02</td><td>Solo se matricula en un grupo si el periodo está en estado <i>matrícula abierta</i> y el grupo tiene cupo disponible (<code>cupos_ocupados &lt; cupo_maximo</code>).</td><td>RF-06, RF-07</td></tr>
+<tr><td>RN-03</td><td>Un docente solo registra o actualiza calificaciones de los grupos que tiene asignados y mientras el periodo no esté cerrado.</td><td>RF-08, RF-02</td></tr>
+<tr><td>RN-04</td><td>Las notas están en el rango 0,0–5,0 y los porcentajes de los componentes de un grupo suman 100 %.</td><td>RF-08, S-02</td></tr>
+<tr><td>RN-05</td><td>El estudiante solo consulta sus propios datos y únicamente las calificaciones marcadas como publicadas.</td><td>RF-09, RNF-11</td></tr>
+<tr><td>RN-06</td><td>Estudiantes y docentes no se eliminan físicamente: se desactivan, para conservar historial y trazabilidad.</td><td>RF-03, RF-04, RF-12</td></tr>
+<tr><td>RN-07</td><td>Modificar una calificación ya publicada exige un motivo y queda registrada en auditoría con el valor anterior y el nuevo.</td><td>RF-08, RF-12</td></tr>
+<tr><td>RN-08</td><td>Un grupo no puede tener cupo máximo menor que el número de matriculados activos.</td><td>RF-06, RNF-07</td></tr>
+</table>
+</div>
+
+<!-- ============================ 4 ============================ -->
+<div class="section">
+<h1>4. Requerimientos funcionales y no funcionales: listado y análisis</h1>
+<p>Los requerimientos del enunciado se conservan con su identificador original. Para cada uno se agregó el actor principal, la prioridad (MoSCoW: <b>M</b> = debe, <b>S</b> = debería) y un <b>criterio de aceptación verificable</b>, porque varios enunciados originales son correctos pero no comprobables tal como están redactados.</p>
+
+<h2>4.1 Requerimientos funcionales (RF)</h2>
+<table class="ids small">
+<thead><tr><th style="width:7%">ID</th><th style="width:15%">Nombre</th><th style="width:14%">Actor(es)</th><th style="width:5%">Prior.</th><th>Criterio de aceptación verificable</th></tr></thead>
+<tr><td>RF-01</td><td>Autenticación</td><td>Todos</td><td>M</td><td>Con credenciales válidas se obtiene una sesión (token de acceso de 15 min y refresh token); con inválidas se responde 401 sin revelar cuál dato falló; tras 5 intentos fallidos en 15 min la cuenta se bloquea temporalmente; el cierre de sesión invalida el refresh token.</td></tr>
+<tr><td>RF-02</td><td>Roles y permisos</td><td>Administrador</td><td>M</td><td>Existen al menos los 4 roles; cada endpoint exige un permiso; un usuario sin permiso recibe 403; el cambio de rol surte efecto en la siguiente renovación de token (≤ 15 min) y queda auditado.</td></tr>
+<tr><td>RF-03</td><td>Gestión de estudiantes</td><td>Administrador, personal autorizado</td><td>M</td><td>Se registra, consulta, actualiza y desactiva un estudiante; el documento es único; desactivar no borra el historial (RN-06).</td></tr>
+<tr><td>RF-04</td><td>Gestión de docentes</td><td>Administrador, personal autorizado</td><td>M</td><td>Igual que RF-03 para docentes; un docente desactivado no puede asignarse a grupos nuevos.</td></tr>
+<tr><td>RF-05</td><td>Programas y asignaturas</td><td>Coordinador</td><td>M</td><td>Se crean y actualizan programas, planes y asignaturas con código único, nombre, créditos y semestre/nivel; una asignatura puede pertenecer a varios planes.</td></tr>
+<tr><td>RF-06</td><td>Grupos y periodos</td><td>Coordinador</td><td>M</td><td>Se configura un periodo con fechas y estado, y grupos con cupo, docente, horario y aula o enlace; se rechaza un cupo menor que los matriculados (RN-08).</td></tr>
+<tr><td>RF-07</td><td>Matrícula académica</td><td>Coordinador, Estudiante</td><td>M</td><td>Se matricula si hay cupo y no hay duplicidad; con 100 solicitudes simultáneas sobre un grupo de 30 cupos se crean exactamente 30 matrículas y 70 respuestas 409; una misma solicitud repetida (mismo <code>Idempotency-Key</code>) no crea dos registros.</td></tr>
+<tr><td>RF-08</td><td>Registro de calificaciones</td><td>Docente</td><td>M</td><td>El docente registra y actualiza notas solo en sus grupos (RN-03) y dentro del rango (RN-04); dos ediciones concurrentes sobre la misma nota producen una 409 en la segunda (control optimista).</td></tr>
+<tr><td>RF-09</td><td>Consulta de resultados</td><td>Estudiante</td><td>M</td><td>El estudiante ve sus asignaturas, horario y solo notas publicadas propias; acceder a datos de otro estudiante devuelve 403/404.</td></tr>
+<tr><td>RF-10</td><td>Reportes</td><td>Administrador, Coordinador</td><td>S</td><td>Se generan reportes de matriculados, grupos, asignaturas y resultados filtrando por periodo y programa, en pantalla y exportables a CSV/PDF.</td></tr>
+<tr><td>RF-11</td><td>Búsqueda y filtros</td><td>Usuarios autorizados</td><td>M</td><td>Cada listado permite buscar por identificador o nombre y filtrar por programa, periodo o estado, con paginación; solo se devuelven registros que el rol puede ver.</td></tr>
+<tr><td>RF-12</td><td>Auditoría</td><td>Sistema / Administrador</td><td>M</td><td>Cada inicio de sesión, cambio de rol, matrícula y modificación de nota genera un evento con usuario, fecha UTC, acción, entidad, registro, valores antes/después e IP; los eventos no se pueden editar ni borrar desde la aplicación.</td></tr>
+</table>
+
+<h2>4.2 Requerimientos no funcionales (RNF)</h2>
+<p>Los RNF se clasificaron según los atributos de calidad del modelo ISO/IEC 25010 y se expresaron como escenarios medibles (estímulo, respuesta y medida), siguiendo la práctica de Bass et al. (2021).</p>
+<table class="ids small">
+<thead><tr><th style="width:7%">ID</th><th style="width:16%">Atributo ISO 25010</th><th>Escenario / métrica objetivo</th></tr></thead>
+<tr><td>RNF-01</td><td>Seguridad (confidencialidad, autenticidad)</td><td>100 % del tráfico en HTTPS (TLS 1.2+, HSTS); contraseñas con hash Argon2id con sal; ningún endpoint de negocio accesible sin token y permiso.</td></tr>
+<tr><td>RNF-02</td><td>Eficiencia de desempeño</td><td>Con 300 usuarios concurrentes en el escenario de referencia, p95 ≤ 3 s en consultas comunes (definidas como: listado paginado, consulta de horario, consulta de notas, búsqueda por documento).</td></tr>
+<tr><td>RNF-03</td><td>Fiabilidad (disponibilidad)</td><td>≥ 99,5 % mensual, equivalente a un máximo aproximado de 3 h 39 min de indisponibilidad no programada al mes.</td></tr>
+<tr><td>RNF-04</td><td>Eficiencia / mantenibilidad (escalabilidad)</td><td>Agregar una instancia de API no requiere cambios de código (API sin estado); el modelo de datos soporta crecimiento por periodos sin rediseño.</td></tr>
+<tr><td>RNF-05</td><td>Mantenibilidad (modularidad, capacidad de prueba)</td><td>Ningún módulo accede a tablas de otro; dependencias solo por interfaces públicas, verificadas por pruebas de arquitectura; cobertura de pruebas del dominio ≥ 70 %.</td></tr>
+<tr><td>RNF-06</td><td>Usabilidad / accesibilidad</td><td>Cumplimiento WCAG 2.2 nivel AA en las funciones principales: contraste ≥ 4,5:1, etiquetas en formularios, operación completa por teclado.</td></tr>
+<tr><td>RNF-07</td><td>Fiabilidad / integridad</td><td>Ninguna matrícula sobrepasa el cupo ni se duplica ante solicitudes simultáneas o fallos a mitad de la operación (transacción ACID).</td></tr>
+<tr><td>RNF-08</td><td>Compatibilidad (interoperabilidad)</td><td>API REST versionada (<code>/api/v1</code>) con contrato OpenAPI 3 publicado y errores en formato <code>application/problem+json</code>.</td></tr>
+<tr><td>RNF-09</td><td>Fiabilidad (recuperabilidad)</td><td>Respaldo base diario y archivado continuo de WAL; RPO ≤ 15 min y RTO ≤ 4 h; restauración probada al menos una vez por periodo académico.</td></tr>
+<tr><td>RNF-10</td><td>Mantenibilidad (trazabilidad del diseño)</td><td>Cada RF/RNF aparece en la matriz con al menos un componente y un método de verificación; cada decisión tiene un ADR.</td></tr>
+<tr><td>RNF-11</td><td>Seguridad (confidencialidad, privacidad)</td><td>Acceso a datos por necesidad del rol y por propiedad del registro; datos personales minimizados en logs; cumplimiento de la Ley 1581 de 2012.</td></tr>
+<tr><td>RNF-12</td><td>Compatibilidad / portabilidad</td><td>Funciona en las dos últimas versiones de Chrome, Edge, Firefox y Safari, en anchos de 360 px a 1920 px.</td></tr>
+</table>
+
+<h2>4.3 Análisis de los requerimientos</h2>
+<p><b>Requerimientos que dirigen la arquitectura.</b> No todos los requerimientos pesan igual en el diseño. Los que más condicionan la estructura son: RNF-07 (consistencia de matrículas y notas ante concurrencia), RNF-01 y RNF-11 (seguridad y privacidad por rol), RNF-03 (disponibilidad de 99,5 %), RNF-05 (bajo acoplamiento) y RF-12 (auditoría transversal). Los demás se satisfacen con decisiones locales dentro de un módulo.</p>
+<p><b>Ambigüedades detectadas y cómo se resolvieron:</b></p>
+<ul>
+  <li><b>RNF-02 «consultas comunes»</b> no estaba definido; se acotó a cuatro operaciones concretas para poder medirlo con pruebas de carga.</li>
+  <li><b>RF-07</b> no indica quién matricula; se asumió coordinador y estudiante (S-03), controlado por permisos.</li>
+  <li><b>RF-08 y RF-09</b> mencionan notas «publicadas», lo que implica un estado de publicación; se agregó el caso de uso UC-09 y el atributo <code>publicada</code>.</li>
+  <li><b>RNF-09</b> no fija tiempos de recuperación; se propusieron RPO ≤ 15 min y RTO ≤ 4 h, coherentes con el margen mensual de RNF-03, y quedan como decisión a validar con la institución.</li>
+  <li><b>RF-03 «desactivar»</b> sugiere borrado lógico; se formalizó en RN-06 para no romper la trazabilidad (RF-12).</li>
+</ul>
+<p><b>Tensiones entre requerimientos.</b> La auditoría completa (RF-12) y la consistencia transaccional (RNF-07) agregan trabajo a cada escritura, lo que compite con el rendimiento (RNF-02). Se resuelve escribiendo el evento en la misma transacción (tabla <i>outbox</i>) y procesándolo de forma asíncrona. La privacidad (RNF-11) también compite con la búsqueda abierta (RF-11): los filtros se aplican en el servidor según rol y propiedad, nunca solo en la interfaz.</p>
+</div>
+
+<!-- ============================ 5 ============================ -->
+<div class="section">
+<h1>5. Arquitectura seleccionada: descripción y justificación</h1>
+<h2>5.1 Alternativas evaluadas</h2>
+<p>Se compararon tres estilos con una escala de 1 (débil) a 5 (fuerte) frente a los atributos de calidad del caso. La evaluación considera el tamaño del sistema (8 módulos funcionales, un solo dominio), el equipo esperado (3 a 5 desarrolladores) y la carga de referencia (300 usuarios concurrentes).</p>
+<table>
+<thead><tr><th style="width:24%">Criterio</th><th style="width:19%">Capas tradicional</th><th style="width:19%">Monolito modular en capas</th><th style="width:19%">Microservicios</th><th>Comentario</th></tr></thead>
+<tr><td>Consistencia de matrícula/notas (RNF-07)</td><td>5</td><td>5</td><td>2</td><td>Con una base de datos, una transacción ACID basta; en microservicios exige sagas y compensaciones.</td></tr>
+<tr><td>Mantenibilidad y bajo acoplamiento (RNF-05)</td><td>2</td><td>4</td><td>5</td><td>Las capas puras tienden a mezclar dominios; el monolito modular impone fronteras por módulo.</td></tr>
+<tr><td>Escalabilidad (RNF-04)</td><td>3</td><td>4</td><td>5</td><td>300 usuarios no requieren escalar módulos por separado; basta escalar instancias sin estado.</td></tr>
+<tr><td>Disponibilidad (RNF-03)</td><td>3</td><td>4</td><td>4</td><td>Ambos alcanzan 99,5 % con redundancia; los microservicios añaden más puntos de falla de red.</td></tr>
+<tr><td>Complejidad operativa</td><td>5</td><td>4</td><td>1</td><td>Microservicios requieren orquestación, descubrimiento, trazas distribuidas y varias bases.</td></tr>
+<tr><td>Costo de infraestructura</td><td>5</td><td>4</td><td>2</td><td>Contexto de presupuesto limitado (R-06).</td></tr>
+<tr><td>Facilidad de evolución futura</td><td>2</td><td>4</td><td>5</td><td>Un módulo con fronteras claras puede extraerse como servicio si la carga lo justifica.</td></tr>
+<tr><td><b>Total</b></td><td><b>25</b></td><td><b>29</b></td><td><b>24</b></td><td>Se selecciona el <b>monolito modular en capas</b>.</td></tr>
+</table>
+
+<h2>5.2 Estilo seleccionado: monolito modular con arquitectura limpia por módulo</h2>
+<p>El SGA se construye como <b>una sola aplicación desplegable</b> (una API REST y una SPA) dividida internamente en <b>ocho módulos de negocio</b> con fronteras explícitas. Dentro de cada módulo se aplican capas al estilo de la arquitectura limpia (Martin, 2017): <i>dominio</i> (entidades y reglas), <i>aplicación</i> (casos de uso), <i>infraestructura</i> (persistencia y adaptadores) y <i>presentación</i> (controladores REST). Las dependencias apuntan hacia el dominio, lo que permite probar las reglas sin base de datos.</p>
+<p><b>Reglas de modularidad</b> que hacen que el estilo funcione en la práctica:</p>
+<ol>
+  <li>Cada módulo es dueño de su <b>esquema</b> en la base de datos (<code>iam</code>, <code>personas</code>, <code>catalogo</code>, <code>oferta</code>, <code>matriculas</code>, <code>calificaciones</code>, <code>auditoria</code>). Ningún módulo consulta tablas de otro.</li>
+  <li>La comunicación entre módulos se hace solo por <b>interfaces públicas</b> síncronas (por ejemplo, <code>IOfertaQuery</code>) o por <b>eventos de dominio</b> asíncronos (por ejemplo, <code>MatriculaRegistrada</code>).</li>
+  <li>Las reglas anteriores se verifican automáticamente con <b>pruebas de arquitectura</b> en la integración continua, para evitar que el monolito se degrade.</li>
+  <li>El módulo de <b>Reportes</b> es de solo lectura y puede consultar vistas de lectura diseñadas para él, conectadas a la réplica de la base de datos.</li>
+</ol>
+<p><b>Por qué no microservicios.</b> El sistema tiene un solo dominio con reglas fuertemente acopladas en la operación crítica (matrícula: cupo del grupo + historial del estudiante + auditoría). Distribuir esa operación obligaría a coordinar consistencia entre servicios sin que la carga lo justifique. Siguiendo la recomendación de comenzar con un monolito bien modularizado y extraer servicios solo cuando haya evidencia (Fowler, 2015; Newman, 2019), la arquitectura deja preparada esa evolución sin pagar hoy su costo.</p>
+<p><b>Por qué no capas tradicionales.</b> Una arquitectura de tres capas sin módulos tiende a producir un «servicio de negocio» que conoce todas las tablas, lo que contradice RNF-05 y dificulta las pruebas aisladas.</p>
+
+<h2>5.3 Pila tecnológica propuesta y relación con los requerimientos</h2>
+<table>
+<thead><tr><th style="width:20%">Elemento</th><th style="width:26%">Tecnología</th><th>Justificación (requerimientos)</th></tr></thead>
+<tr><td>Cliente web</td><td>Angular (SPA) con diseño adaptable y componentes accesibles</td><td>Tipado fuerte, guards de ruta por rol, soporte de accesibilidad y diseño responsive (RNF-06, RNF-12). Coherente con S-05.</td></tr>
+<tr><td>Backend / API</td><td>ASP.NET Core (C#), API REST con OpenAPI</td><td>Alto rendimiento por instancia, middleware nativo de autenticación, autorización por políticas y rate limiting (RNF-01, RNF-02, RNF-08).</td></tr>
+<tr><td>Persistencia</td><td>PostgreSQL + EF Core</td><td>Transacciones ACID, bloqueo de filas (<code>SELECT … FOR UPDATE</code>), índices únicos parciales, replicación y recuperación a un punto en el tiempo (RNF-07, RNF-09).</td></tr>
+<tr><td>Caché</td><td>Redis</td><td>Caché de catálogos poco cambiantes (programas, asignaturas) y contadores de rate limiting (RNF-02).</td></tr>
+<tr><td>Contenedores</td><td>Docker sobre servicio administrado de contenedores</td><td>Despliegue repetible, varias instancias sin estado y autoescalado (RNF-03, RNF-04).</td></tr>
+<tr><td>Observabilidad</td><td>OpenTelemetry + servicio de logs/métricas</td><td>Medir p95, errores y disponibilidad para verificar RNF-02 y RNF-03.</td></tr>
+<tr><td>Integración continua</td><td>GitHub Actions</td><td>Pruebas unitarias, de arquitectura, de integración, análisis de seguridad y despliegue automatizado (RNF-05, RNF-10).</td></tr>
+</table>
+<p class="small">La pila es reemplazable: el estilo arquitectónico y los modelos no dependen de ella. Por ejemplo, Spring Boot + MySQL o NestJS + PostgreSQL cumplirían el mismo rol.</p>
+
+<h2>5.4 Tácticas arquitectónicas por atributo de calidad</h2>
+<table class="small">
+<thead><tr><th style="width:18%">Atributo</th><th>Tácticas aplicadas</th></tr></thead>
+<tr><td>Seguridad (RNF-01, RNF-11)</td><td>TLS extremo a extremo; WAF; JWT de corta vida + refresh token rotativo en cookie <i>HttpOnly, Secure, SameSite=Strict</i>; RBAC por permisos granulares; autorización por propiedad del recurso (el estudiante solo accede a lo suyo); Argon2id; secretos en gestor de secretos; bloqueo por intentos fallidos; consultas parametrizadas (ORM); cabeceras CSP y HSTS.</td></tr>
+<tr><td>Rendimiento (RNF-02)</td><td>Paginación obligatoria; índices por los campos de filtro de RF-11; caché de catálogos; reportes pesados en el worker y contra la réplica; compresión HTTP; SPA servida por CDN.</td></tr>
+<tr><td>Disponibilidad (RNF-03)</td><td>Redundancia activa de la API (2 instancias en zonas distintas); health checks y retiro automático de instancias enfermas; base de datos con réplica en espera y conmutación por error; despliegues sin caída (rolling).</td></tr>
+<tr><td>Escalabilidad (RNF-04)</td><td>API sin estado (sesión en el token); escalado horizontal por CPU/latencia; separación de lecturas hacia réplica; posibilidad de extraer módulos.</td></tr>
+<tr><td>Integridad (RNF-07)</td><td>Transacción única por caso de uso; bloqueo pesimista del grupo al matricular; índice único parcial como segunda barrera; control de concurrencia optimista (columna <code>version</code>) en notas; claves de idempotencia.</td></tr>
+<tr><td>Mantenibilidad (RNF-05)</td><td>Módulos con fronteras verificadas por pruebas de arquitectura; inyección de dependencias; dominio sin dependencias de infraestructura.</td></tr>
+<tr><td>Interoperabilidad (RNF-08)</td><td>REST con OpenAPI 3, versionado en la URL, errores estandarizados (RFC 9457 <i>problem details</i>).</td></tr>
+<tr><td>Recuperabilidad (RNF-09)</td><td>Respaldo base diario + WAL continuo a almacenamiento de objetos en otra región, cifrado y versionado; procedimiento de restauración documentado y ensayado.</td></tr>
+</table>
+
+<h2>5.5 Interfaces principales de la API REST (v1)</h2>
+<table class="small">
+<thead><tr><th style="width:42%">Endpoint</th><th style="width:20%">Permiso / rol</th><th>Propósito (RF)</th></tr></thead>
+<tr><td><code>POST /auth/login</code> · <code>POST /auth/refresh</code> · <code>POST /auth/logout</code></td><td>Público / autenticado</td><td>Inicio, renovación y cierre de sesión (RF-01)</td></tr>
+<tr><td><code>GET|PUT /usuarios/{id}/roles</code></td><td>Administrador</td><td>Asignar roles y permisos (RF-02)</td></tr>
+<tr><td><code>GET|POST /estudiantes</code> · <code>GET|PUT /estudiantes/{id}</code> · <code>PATCH /estudiantes/{id}/estado</code></td><td>Administrador, autorizado</td><td>CRUD y desactivación (RF-03, RF-11)</td></tr>
+<tr><td><code>GET|POST /docentes</code> · <code>PUT /docentes/{id}</code> · <code>PATCH /docentes/{id}/estado</code></td><td>Administrador, autorizado</td><td>CRUD y desactivación (RF-04, RF-11)</td></tr>
+<tr><td><code>/programas</code> · <code>/programas/{id}/planes</code> · <code>/asignaturas</code></td><td>Coordinador</td><td>Catálogo académico (RF-05)</td></tr>
+<tr><td><code>/periodos</code> · <code>/grupos</code> · <code>/grupos/{id}/horarios</code></td><td>Coordinador</td><td>Oferta académica (RF-06)</td></tr>
+<tr><td><code>POST /matriculas</code> · <code>PATCH /matriculas/{id}/anular</code></td><td>Coordinador, Estudiante (propia)</td><td>Matrícula (RF-07)</td></tr>
+<tr><td><code>GET /grupos/{id}/calificaciones</code> · <code>PUT /calificaciones/{id}</code> · <code>POST /grupos/{id}/calificaciones/publicar</code></td><td>Docente del grupo</td><td>Registro y publicación (RF-08)</td></tr>
+<tr><td><code>GET /me/matriculas</code> · <code>GET /me/horario</code> · <code>GET /me/calificaciones</code></td><td>Estudiante</td><td>Consulta de resultados (RF-09)</td></tr>
+<tr><td><code>GET /reportes/{tipo}?periodo=&amp;programa=&amp;formato=</code></td><td>Administrador, Coordinador</td><td>Reportes (RF-10)</td></tr>
+<tr><td><code>GET /auditoria?usuario=&amp;accion=&amp;desde=&amp;hasta=</code></td><td>Administrador</td><td>Consulta de bitácora (RF-12)</td></tr>
+</table>
+<p class="small">Todas las rutas llevan el prefijo <code>/api/v1</code>. Los listados aceptan <code>q</code>, <code>page</code>, <code>pageSize</code> y filtros por <code>programa</code>, <code>periodo</code> y <code>estado</code> (RF-11).</p>
+</div>
+
+<!-- ============================ 6 ============================ -->
+<div class="section">
+<h1>6. Modelo del sistema</h1>
+<h2>6.1 Modelo de casos de uso</h2>
+<p>El diagrama muestra los cuatro actores principales y los 13 casos de uso que inician. UC-14 y UC-15 (en gris) no los inicia un actor: son comportamientos incluidos que el sistema ejecuta siempre dentro de otros casos de uso.</p>
+<div class="fig"><img src="../diagramas/01_casos_de_uso.png" style="width:96%"><div class="cap"><b>Figura 1.</b> Modelo de casos de uso del SGA. Leyenda: línea continua = asociación actor–caso de uso; flecha discontinua = relación «include» / «extend».</div></div>
+
+<h3>Descripción breve de los casos de uso</h3>
+<table class="ids small">
+<thead><tr><th style="width:8%">ID</th><th style="width:25%">Caso de uso</th><th style="width:17%">Actor(es)</th><th>Descripción</th><th style="width:9%">RF</th></tr></thead>
+<tr><td>UC-01</td><td>Iniciar / cerrar sesión</td><td>Todos</td><td>Autentica con credenciales individuales; emite y revoca tokens; registra el evento.</td><td>RF-01</td></tr>
+<tr><td>UC-02</td><td>Gestionar usuarios, roles y permisos</td><td>Administrador</td><td>Crea usuarios, asigna y retira roles, define permisos de cada rol.</td><td>RF-02</td></tr>
+<tr><td>UC-03</td><td>Gestionar estudiantes</td><td>Administrador</td><td>Registra, consulta, actualiza y desactiva estudiantes.</td><td>RF-03</td></tr>
+<tr><td>UC-04</td><td>Gestionar docentes</td><td>Administrador</td><td>Registra, consulta, actualiza y desactiva docentes.</td><td>RF-04</td></tr>
+<tr><td>UC-05</td><td>Gestionar programas, planes y asignaturas</td><td>Coordinador</td><td>Mantiene el catálogo académico con códigos, créditos y semestres.</td><td>RF-05</td></tr>
+<tr><td>UC-06</td><td>Configurar periodos, grupos y horarios</td><td>Coordinador</td><td>Abre periodos, crea grupos con cupo, docente, horario y aula/enlace.</td><td>RF-06</td></tr>
+<tr><td>UC-07</td><td>Matricular estudiante</td><td>Coordinador, Estudiante</td><td>Inscribe a un estudiante en un grupo validando cupo y duplicidad.</td><td>RF-07</td></tr>
+<tr><td>UC-08</td><td>Registrar / actualizar calificaciones</td><td>Docente</td><td>Ingresa o corrige notas por componente de evaluación.</td><td>RF-08</td></tr>
+<tr><td>UC-09</td><td>Publicar calificaciones</td><td>Docente</td><td>Hace visibles al estudiante las notas de un componente (extiende UC-08).</td><td>RF-08, RF-09</td></tr>
+<tr><td>UC-10</td><td>Consultar asignaturas, horario y notas</td><td>Estudiante</td><td>Muestra la información académica propia y las notas publicadas.</td><td>RF-09</td></tr>
+<tr><td>UC-11</td><td>Generar reportes</td><td>Administrador, Coordinador</td><td>Reportes filtrados por periodo y programa, exportables.</td><td>RF-10</td></tr>
+<tr><td>UC-12</td><td>Buscar y filtrar registros</td><td>Usuarios autorizados</td><td>Búsqueda paginada con filtros según el módulo y el rol.</td><td>RF-11</td></tr>
+<tr><td>UC-13</td><td>Consultar bitácora de auditoría</td><td>Administrador</td><td>Filtra eventos por usuario, acción y rango de fechas.</td><td>RF-12</td></tr>
+<tr><td>UC-14</td><td>Registrar evento de auditoría</td><td>Sistema</td><td>Guarda quién, cuándo, qué acción y qué registro; incluido en UC-01, 02, 07 y 08.</td><td>RF-12</td></tr>
+<tr><td>UC-15</td><td>Validar cupo y duplicidad</td><td>Sistema</td><td>Aplica RN-01 y RN-02 dentro de la transacción de matrícula.</td><td>RF-07</td></tr>
+</table>
+
+<h3>Especificación del caso de uso crítico UC-07 — Matricular estudiante</h3>
+<table class="small">
+<tr><td style="width:22%"><b>Actores</b></td><td>Estudiante (matrícula propia) o Coordinador académico (en nombre de un estudiante).</td></tr>
+<tr><td><b>Precondiciones</b></td><td>Usuario autenticado con permiso <code>matricula.crear</code>; periodo en estado <i>matrícula abierta</i>; estudiante activo.</td></tr>
+<tr><td><b>Flujo principal</b></td><td>1. El actor busca la asignatura y elige un grupo con horario. 2. El sistema muestra cupos disponibles. 3. El actor confirma. 4. El sistema bloquea el grupo, valida cupo (RN-02) y no duplicidad (RN-01). 5. El sistema crea la matrícula, incrementa los cupos ocupados y registra el evento de auditoría en la misma transacción. 6. El sistema confirma y actualiza el horario del estudiante.</td></tr>
+<tr><td><b>Flujos alternos</b></td><td>4a. Sin cupo → mensaje «Grupo sin cupo» y sugerencia de otros grupos de la misma asignatura. 4b. Ya matriculado en la asignatura → mensaje «Ya está matriculado». 3a. Doble clic o reintento de red → la clave de idempotencia devuelve la matrícula ya creada. 1a. Periodo cerrado → la opción no se muestra y la API responde 409.</td></tr>
+<tr><td><b>Postcondiciones</b></td><td>Matrícula activa; <code>cupos_ocupados</code> incrementado en 1; evento <code>MatriculaRegistrada</code> en bitácora.</td></tr>
+</table>
+
+<h3>Especificación del caso de uso crítico UC-08 — Registrar / actualizar calificaciones</h3>
+<table class="small">
+<tr><td style="width:22%"><b>Actor</b></td><td>Docente.</td></tr>
+<tr><td><b>Precondiciones</b></td><td>Docente asignado al grupo; periodo no cerrado; componentes de evaluación configurados con porcentajes que suman 100 %.</td></tr>
+<tr><td><b>Flujo principal</b></td><td>1. El docente abre la planilla del grupo. 2. Ingresa notas por estudiante y componente. 3. El sistema valida rango 0,0–5,0 y pertenencia al grupo. 4. Guarda con control de versión y registra auditoría con valor anterior y nuevo. 5. Opcionalmente publica (UC-09).</td></tr>
+<tr><td><b>Flujos alternos</b></td><td>3a. Nota fuera de rango → error por campo. 4a. Otra sesión modificó la nota → 409 y recarga de la planilla. 4b. Nota ya publicada → exige motivo del cambio (RN-07).</td></tr>
+<tr><td><b>Postcondiciones</b></td><td>Nota guardada con nueva versión; evento <code>CalificacionModificada</code> en bitácora.</td></tr>
+</table>
+</div>
+
+<div class="section">
+<h2>6.2 Modelo de componentes / vista lógica</h2>
+<p>La vista lógica muestra cómo se organiza el monolito modular. La SPA se comunica solo con la API por HTTPS. Toda petición pasa por el pipeline de middleware (autenticación y autorización centralizadas) antes de llegar a los módulos, de modo que ningún módulo puede omitir el control de acceso. Los módulos se comunican por interfaces de consulta (flechas azules) y publican eventos de dominio que alimentan la auditoría (flecha discontinua dorada).</p>
+<div class="fig"><img src="../diagramas/02_componentes.png" style="width:88%"><div class="cap"><b>Figura 2.</b> Vista lógica de componentes del SGA. Leyenda: verde = cliente; azul = módulos de negocio; dorado = presentación e infraestructura; morado = almacenamiento; línea discontinua = comunicación asíncrona o de solo lectura.</div></div>
+</div>
+<div>
+<h3>Responsabilidades, interfaces y dependencias de los módulos</h3>
+<table class="small">
+<thead><tr><th style="width:17%">Módulo</th><th style="width:31%">Responsabilidad</th><th style="width:27%">Interfaz pública / eventos</th><th>Depende de</th></tr></thead>
+<tr><td><b>M1 Identidad y Acceso</b></td><td>Usuarios, credenciales (Argon2id), emisión y revocación de tokens, roles, permisos, bloqueo por intentos.</td><td>REST <code>/auth</code>, <code>/usuarios</code>; políticas de autorización consumidas por el middleware; eventos <code>LoginRealizado</code>, <code>RolCambiado</code>.</td><td>Ninguno (módulo base).</td></tr>
+<tr><td><b>M2 Personas</b></td><td>Datos de estudiantes y docentes, estado activo/inactivo, vínculo con usuario.</td><td><code>IPersonaQuery</code> (estado, programa del estudiante).</td><td>M1 (vincular usuario).</td></tr>
+<tr><td><b>M3 Catálogo académico</b></td><td>Programas, planes de estudio, asignaturas, créditos, semestres.</td><td><code>ICatalogoQuery</code>.</td><td>Ninguno.</td></tr>
+<tr><td><b>M4 Oferta académica</b></td><td>Periodos y su estado, grupos, cupos, docentes asignados, horarios, aulas o enlaces.</td><td><code>IOfertaQuery</code> (grupo, cupos, periodo, docente del grupo).</td><td>M3, M2.</td></tr>
+<tr><td><b>M5 Matrículas</b></td><td>Caso de uso de matrícula: bloqueo, validación de cupo y duplicidad, anulación.</td><td><code>IMatriculaQuery</code>; evento <code>MatriculaRegistrada</code> / <code>MatriculaAnulada</code>.</td><td>M4, M2.</td></tr>
+<tr><td><b>M6 Calificaciones</b></td><td>Componentes evaluativos, registro y actualización de notas, publicación, control de versión.</td><td>Evento <code>CalificacionModificada</code>, <code>CalificacionesPublicadas</code>.</td><td>M5 (inscritos), M4 (docente del grupo).</td></tr>
+<tr><td><b>M7 Reportes</b></td><td>Consultas de solo lectura con filtros; exportación CSV/PDF en segundo plano.</td><td>REST <code>/reportes</code>.</td><td>Vistas de lectura de M3–M6 (réplica).</td></tr>
+<tr><td><b>M8 Auditoría</b></td><td>Persistir eventos de forma inmutable (solo inserción) y consultarlos.</td><td>REST <code>/auditoria</code>; suscriptor de todos los eventos.</td><td>Ninguno (solo recibe eventos).</td></tr>
+</table>
+<p><b>Organización de autenticación y autorización.</b> M1 emite el token con el identificador del usuario y sus permisos. El middleware valida firma, vigencia y permiso requerido por cada endpoint (autorización por políticas). La verificación de <i>propiedad</i> (por ejemplo, que el estudiante consulte sus propias notas o que el docente edite solo sus grupos) se hace en la capa de aplicación del módulo, porque depende de datos del dominio.</p>
+</div>
+
+<div class="section">
+<h2>6.3 Modelo de despliegue</h2>
+<p>El despliegue separa tres zonas de red. Solo la CDN/WAF y el balanceador son públicos; la API, el worker y los datos viven en redes privadas sin dirección pública. La API se ejecuta en al menos dos contenedores sin estado, ubicados en zonas de disponibilidad distintas; la base de datos tiene un primario y una réplica en espera en otra zona.</p>
+<div class="fig"><img src="../diagramas/03_despliegue.png" style="width:86%"><div class="cap"><b>Figura 3.</b> Modelo de despliegue del SGA. Las etiquetas de las conexiones indican protocolo y puerto.</div></div>
+</div>
+<div>
+<h3>Nodos, canales y controles de seguridad</h3>
+<table class="small">
+<thead><tr><th style="width:22%">Nodo / servicio</th><th style="width:34%">Función</th><th>Controles de seguridad y disponibilidad</th></tr></thead>
+<tr><td>Navegador web</td><td>Ejecuta la SPA.</td><td>Solo HTTPS; tokens de acceso en memoria y refresh token en cookie <i>HttpOnly</i>; CSP.</td></tr>
+<tr><td>CDN + WAF</td><td>Sirve archivos estáticos de la SPA y reenvía <code>/api/*</code>.</td><td>Reglas OWASP (inyección, XSS), mitigación DDoS, HSTS, caché de estáticos.</td></tr>
+<tr><td>Balanceador L7</td><td>Distribuye peticiones entre instancias.</td><td>Terminación TLS 1.2+ y re-cifrado TLS hacia la API; redirección 80 → 443; health checks cada 10 s; retira instancias que fallan.</td></tr>
+<tr><td>API SGA (A y B)</td><td>Ejecuta el monolito modular.</td><td>Sin estado; en red privada; credenciales desde gestor de secretos; rate limiting; autoescalado.</td></tr>
+<tr><td>Worker</td><td>Procesa outbox, reportes pesados, tareas programadas.</td><td>Mismo artefacto que la API con otro punto de entrada; lee de la réplica.</td></tr>
+<tr><td>PostgreSQL primario / réplica</td><td>Datos transaccionales.</td><td>Conexión TLS; cifrado en reposo; usuario de BD con mínimo privilegio por esquema; replicación por streaming; conmutación por error.</td></tr>
+<tr><td>Redis</td><td>Caché y contadores de rate limiting.</td><td>Red privada, TLS y autenticación; si falla, el sistema sigue funcionando sin caché (degradación).</td></tr>
+<tr><td>Almacenamiento de objetos</td><td>Respaldos y archivos exportados.</td><td>Cifrado, versionado, bloqueo contra borrado durante la retención, copia en otra región.</td></tr>
+<tr><td>Observabilidad</td><td>Logs, métricas, trazas, alertas.</td><td>Logs sin contraseñas ni datos personales completos; alertas de disponibilidad y latencia p95.</td></tr>
+</table>
+</div>
+
+<div class="section">
+<h2>6.4 Modelo de datos conceptual</h2>
+<p>El modelo incluye las entidades pedidas en el enunciado (Usuario, Rol, Estudiante, Docente, Programa, Asignatura, PeriodoAcadémico, Grupo, Matrícula y Calificación) y las entidades de apoyo necesarias para que las relaciones muchos a muchos y la auditoría sean coherentes (Permiso, PlanEstudio, Horario, EventoAuditoría y las tablas de asociación).</p>
+<div class="fig"><img src="../diagramas/04_modelo_datos.png" style="width:100%"><div class="cap"><b>Figura 4.</b> Modelo de datos conceptual. Las cifras en rojo en los extremos de cada relación indican la cardinalidad (1, 0..1, 0..N, 1..N). PK = clave primaria, FK = clave foránea, UK = valor único. Colores por módulo dueño de los datos.</div></div>
+</div>
+<div>
+<h3>Cardinalidades principales</h3>
+<table class="small">
+<thead><tr><th style="width:38%">Relación</th><th style="width:15%">Cardinalidad</th><th>Significado</th></tr></thead>
+<tr><td>Usuario — Rol (vía Usuario_Rol)</td><td>N : M</td><td>Un usuario puede tener varios roles (por ejemplo, docente y coordinador).</td></tr>
+<tr><td>Rol — Permiso (vía Rol_Permiso)</td><td>N : M</td><td>Los permisos se agrupan por rol; permite ajustar sin cambiar código.</td></tr>
+<tr><td>Usuario — Estudiante / Docente</td><td>1 : 0..1</td><td>Un usuario puede ser o no estudiante o docente; cada perfil tiene exactamente un usuario.</td></tr>
+<tr><td>Programa — PlanEstudio</td><td>1 : 1..N</td><td>Un programa tiene una o más versiones de plan; solo una vigente.</td></tr>
+<tr><td>PlanEstudio — Asignatura (vía Plan_Asignatura)</td><td>N : M</td><td>Una asignatura puede pertenecer a varios planes, con su semestre en cada uno.</td></tr>
+<tr><td>Estudiante — Programa</td><td>N : 1</td><td>Cada estudiante está inscrito en un programa.</td></tr>
+<tr><td>PeriodoAcadémico — Grupo</td><td>1 : 0..N</td><td>Cada grupo pertenece a un periodo.</td></tr>
+<tr><td>Asignatura — Grupo</td><td>1 : 0..N</td><td>Una asignatura se ofrece en varios grupos por periodo.</td></tr>
+<tr><td>Docente — Grupo</td><td>1 : 0..N</td><td>Cada grupo tiene un docente asignado.</td></tr>
+<tr><td>Grupo — Horario</td><td>1 : 1..N</td><td>Un grupo tiene una o más franjas con aula o enlace.</td></tr>
+<tr><td>Estudiante — Matrícula — Grupo</td><td>1 : 0..N : 1</td><td>La matrícula asocia un estudiante con un grupo en un periodo.</td></tr>
+<tr><td>Matrícula — Calificación</td><td>1 : 0..N</td><td>Una nota por componente evaluativo de la matrícula.</td></tr>
+<tr><td>Usuario — EventoAuditoría</td><td>1 : 0..N</td><td>Cada evento identifica al usuario que realizó la acción.</td></tr>
+</table>
+<h3>Restricciones de integridad relevantes</h3>
+<ul>
+  <li>Índice único parcial en <code>matricula(estudiante_id, asignatura_id, periodo_id) WHERE estado = 'ACTIVA'</code>: impide duplicados incluso si fallara la validación de la aplicación (RN-01). Por eso Matrícula guarda <code>asignatura_id</code> y <code>periodo_id</code> redundantes respecto del grupo.</li>
+  <li>Restricción <code>CHECK (cupos_ocupados &lt;= cupo_maximo)</code> en Grupo (RN-02, RN-08).</li>
+  <li>Restricción <code>CHECK (nota BETWEEN 0 AND 5)</code> en Calificación (RN-04).</li>
+  <li>Columnas <code>version</code> en Grupo y Calificación para control de concurrencia optimista.</li>
+  <li>EventoAuditoría: el usuario de base de datos de la aplicación solo tiene permiso <code>INSERT</code> y <code>SELECT</code> sobre esta tabla.</li>
+</ul>
+</div>
+
+<div class="section">
+<h2>6.5 Vistas de secuencia</h2>
+<p>Se modelan los dos procesos críticos que menciona el enunciado. El de matrícula es el más exigente porque combina control de acceso, concurrencia sobre un recurso limitado (cupos) y auditoría.</p>
+<div class="fig"><img src="../diagramas/05_secuencia_matricula.png" style="width:100%"><div class="cap"><b>Figura 5.</b> Diagrama de secuencia: matrícula de un estudiante en un grupo.</div></div>
+<p><b>Lectura del diagrama.</b> (1–4) El middleware rechaza peticiones sin token válido o sin permiso antes de tocar la lógica de negocio. (9–13) El servicio abre una transacción y bloquea la fila del grupo con <code>FOR UPDATE</code>: si 100 estudiantes intentan matricularse a la vez, las transacciones sobre ese grupo se serializan y el conteo de cupos nunca se lee desactualizado. (14–17) Si falla una regla, se revierte todo y el usuario recibe un mensaje claro. (18–21) Matrícula, incremento de cupos y evento <i>outbox</i> se confirman juntos, por lo que no puede existir una matrícula sin su registro de auditoría. (25–27) La auditoría se procesa de forma asíncrona y no penaliza el tiempo de respuesta.</p>
+</div>
+<div>
+<div class="fig"><img src="../diagramas/06_secuencia_calificacion.png" style="width:92%"><div class="cap"><b>Figura 6.</b> Diagrama de secuencia complementario: registro o actualización de una calificación con control de concurrencia optimista.</div></div>
+<p>En las notas no se usa bloqueo pesimista porque los conflictos son raros (un grupo tiene un solo docente). Se usa control optimista: la actualización solo se aplica si la versión no cambió; si otra sesión modificó la nota, se responde 409 y la interfaz recarga.</p>
+</div>
+
+<!-- ============================ 7 ============================ -->
+<div class="section">
+<h1>7. Matriz de trazabilidad de requerimientos</h1>
+<p>Cada requerimiento se relaciona con los componentes que lo satisfacen, los modelos donde se representa, la decisión arquitectónica asociada (sección 8.1) y el método propuesto para verificar su cumplimiento.</p>
+<table class="ids small" id="matriz">
+<thead><tr><th style="width:7%">ID</th><th style="width:22%">Componente(s)</th><th style="width:15%">Modelo(s)</th><th style="width:8%">ADR</th><th>Evidencia / método de verificación</th></tr></thead>
+<tr><td>RF-01</td><td>SPA (login), M1, middleware JWT</td><td>UC-01; Fig. 2</td><td>ADR-03</td><td>Pruebas de integración: login válido/ inválido, bloqueo tras 5 intentos, logout revoca refresh token.</td></tr>
+<tr><td>RF-02</td><td>M1, middleware RBAC</td><td>UC-02; Fig. 2, 4 (Rol, Permiso)</td><td>ADR-03</td><td>Matriz rol × endpoint automatizada: cada combinación no permitida debe devolver 403.</td></tr>
+<tr><td>RF-03</td><td>M2, SPA Administración</td><td>UC-03; Fig. 4 (Estudiante)</td><td>ADR-01</td><td>Pruebas de API del CRUD; verificar que desactivar conserva historial.</td></tr>
+<tr><td>RF-04</td><td>M2, SPA Administración</td><td>UC-04; Fig. 4 (Docente)</td><td>ADR-01</td><td>Igual a RF-03; docente inactivo no asignable a grupo nuevo.</td></tr>
+<tr><td>RF-05</td><td>M3</td><td>UC-05; Fig. 4 (Programa, Plan, Asignatura)</td><td>ADR-01</td><td>Pruebas de API; unicidad de código; asignatura en varios planes.</td></tr>
+<tr><td>RF-06</td><td>M4</td><td>UC-06; Fig. 4 (Periodo, Grupo, Horario)</td><td>ADR-01</td><td>Pruebas unitarias de RN-08; pruebas de API de configuración.</td></tr>
+<tr><td>RF-07</td><td>M5, M4 (<code>IOfertaQuery</code>), PostgreSQL</td><td>UC-07, UC-15; Fig. 5</td><td>ADR-02</td><td>Prueba de concurrencia: 100 solicitudes simultáneas a grupo de 30 cupos ⇒ exactamente 30 matrículas; prueba de idempotencia.</td></tr>
+<tr><td>RF-08</td><td>M6, M5 (<code>IMatriculaQuery</code>)</td><td>UC-08, UC-09; Fig. 6</td><td>ADR-02</td><td>Pruebas unitarias de RN-03/04; prueba de edición concurrente ⇒ 409.</td></tr>
+<tr><td>RF-09</td><td>SPA portal estudiante, M5, M6, M4</td><td>UC-10</td><td>ADR-03</td><td>Prueba E2E (Playwright); intento de leer datos de otro estudiante ⇒ 403/404.</td></tr>
+<tr><td>RF-10</td><td>M7, Worker, almacenamiento de objetos</td><td>UC-11; Fig. 2, 3</td><td>ADR-05</td><td>Comparar totales del reporte con consultas SQL de control sobre datos de prueba.</td></tr>
+<tr><td>RF-11</td><td>Controladores (paginación/filtros), índices BD</td><td>UC-12</td><td>—</td><td>Pruebas de API con filtros combinados; plan de ejecución SQL usa índices.</td></tr>
+<tr><td>RF-12</td><td>M8, bus de eventos (outbox)</td><td>UC-13, UC-14; Fig. 5, 6; Fig. 4 (EventoAuditoría)</td><td>ADR-04</td><td>Por cada acción auditable, verificar evento con usuario, fecha, acción, registro; intento de UPDATE/DELETE en bitácora falla.</td></tr>
+<tr><td>RNF-01</td><td>CDN/WAF, balanceador TLS, M1 (Argon2id), middleware</td><td>Fig. 3</td><td>ADR-03</td><td>SSL Labs ≥ A; OWASP ZAP sin hallazgos altos; revisión de que la columna de contraseña solo contiene hashes; lista de verificación OWASP ASVS nivel 2.</td></tr>
+<tr><td>RNF-02</td><td>Caché Redis, índices, réplica para reportes, CDN</td><td>Fig. 3</td><td>ADR-05</td><td>Prueba de carga con k6: 300 usuarios virtuales, 30 min; p95 ≤ 3 s en las 4 consultas comunes.</td></tr>
+<tr><td>RNF-03</td><td>2 instancias API, balanceador, réplica BD</td><td>Fig. 3</td><td>ADR-05</td><td>Monitoreo de disponibilidad externo; ensayo de falla: apagar una instancia y el primario sin pérdida de servicio prolongada.</td></tr>
+<tr><td>RNF-04</td><td>API sin estado, autoescalado</td><td>Fig. 3</td><td>ADR-01, ADR-05</td><td>Prueba de carga al doble de usuarios con 4 instancias; verificar escalado sin cambios de código.</td></tr>
+<tr><td>RNF-05</td><td>Módulos M1–M8, esquemas por módulo</td><td>Fig. 2</td><td>ADR-01</td><td>Pruebas de arquitectura en CI (dependencias prohibidas fallan el build); cobertura de dominio ≥ 70 %.</td></tr>
+<tr><td>RNF-06</td><td>SPA Angular</td><td>—</td><td>ADR-06</td><td>axe-core / Lighthouse ≥ 90 en accesibilidad; recorrido manual solo con teclado.</td></tr>
+<tr><td>RNF-07</td><td>M5, M6, PostgreSQL (transacciones, índices, CHECK)</td><td>Fig. 4, 5, 6</td><td>ADR-02</td><td>Las mismas pruebas de concurrencia de RF-07 y RF-08; inyección de falla a mitad de transacción ⇒ sin datos parciales.</td></tr>
+<tr><td>RNF-08</td><td>Controladores REST, OpenAPI</td><td>Sección 5.5</td><td>ADR-06</td><td>Contrato OpenAPI publicado y validado en CI; pruebas de contrato.</td></tr>
+<tr><td>RNF-09</td><td>PostgreSQL WAL, almacenamiento de objetos</td><td>Fig. 3</td><td>ADR-05</td><td>Simulacro de restauración por periodo: medir RPO y RTO reales y registrar el acta.</td></tr>
+<tr><td>RNF-10</td><td>Este documento, ADR, repositorio</td><td>Sección 7</td><td>Todos</td><td>Revisión de que cada fila de esta matriz tiene componente y verificación.</td></tr>
+<tr><td>RNF-11</td><td>Middleware RBAC, verificación de propiedad, logs sin datos personales</td><td>Fig. 2</td><td>ADR-03</td><td>Pruebas negativas de acceso cruzado; revisión de logs; inventario de datos personales.</td></tr>
+<tr><td>RNF-12</td><td>SPA responsive, CDN</td><td>Fig. 3</td><td>ADR-06</td><td>Pruebas E2E en Chrome, Edge, Firefox y Safari (WebKit) a 360, 768 y 1920 px.</td></tr>
+</table>
+<div class="note"><b>Cobertura:</b> 12 de 12 RF y 12 de 12 RNF tienen al menos un componente y un método de verificación. Ningún componente quedó sin requerimiento asociado (Redis y el worker se justifican por RNF-02 y RF-10/RF-12).</div>
+</div>
+
+<!-- ============================ 8 ============================ -->
+<div class="section">
+<h1>8. Decisiones arquitectónicas, atributos de calidad y análisis de riesgos</h1>
+<h2>8.1 Registro de decisiones arquitectónicas (ADR)</h2>
+
+<div class="adr"><h3>ADR-01 · Monolito modular en lugar de microservicios</h3>
+<p><b>Contexto:</b> un solo dominio académico, 8 módulos, equipo de 3 a 5 personas, 300 usuarios concurrentes y una operación crítica (matrícula) que necesita consistencia fuerte.</p>
+<p><b>Decisión:</b> una aplicación desplegable con módulos de fronteras explícitas, esquema de base de datos por módulo y comunicación por interfaces o eventos.</p>
+<p><b>Consecuencias:</b> (+) transacciones locales simples, operación y costo bajos, un solo pipeline de despliegue. (−) un error grave puede afectar todo el sistema; se escala la aplicación completa y no un módulo. <b>Mitigación:</b> pruebas de arquitectura para preservar fronteras y opción de extraer módulos (por ejemplo, Reportes) si la carga lo exige.</p></div>
+
+<div class="adr"><h3>ADR-02 · Base de datos relacional con bloqueo pesimista para cupos y optimista para notas</h3>
+<p><b>Contexto:</b> RNF-07 exige que no se sobrepasen cupos ni se dupliquen matrículas ante solicitudes simultáneas; las notas rara vez tienen conflictos.</p>
+<p><b>Decisión:</b> PostgreSQL; matrícula con <code>SELECT … FOR UPDATE</code> sobre el grupo dentro de una transacción e índice único parcial como segunda barrera; calificaciones con columna <code>version</code>.</p>
+<p><b>Consecuencias:</b> (+) corrección garantizada por la base de datos y no solo por la aplicación. (−) en la apertura de matrícula, los grupos más solicitados serializan sus transacciones y pueden formar colas. <b>Mitigación:</b> transacciones cortas (sin llamadas externas dentro); <code>lock_timeout</code> de 2 s; límite de solicitudes concurrentes por grupo para no agotar el pool de conexiones; si un estudiante matricula varios grupos, cada grupo se procesa en su propia transacción (éxito parcial informado por asignatura) o los bloqueos se toman en orden ascendente de id de grupo para evitar interbloqueos; prueba de carga específica del día de apertura. La actualización condicional <code>UPDATE … WHERE cupos_ocupados &lt; cupo_maximo</code> es una alternativa equivalente.</p></div>
+
+<div class="adr"><h3>ADR-03 · JWT de corta duración + refresh token rotativo, RBAC por permisos y Argon2id</h3>
+<p><b>Contexto:</b> RNF-01, RNF-11 y RF-02; la API debe ser sin estado para escalar (RNF-04).</p>
+<p><b>Decisión:</b> token de acceso de 15 minutos con permisos; refresh token rotativo en cookie <i>HttpOnly</i>, revocable en base de datos; autorización por permisos (no por nombre de rol) más verificación de propiedad del recurso; contraseñas con Argon2id según la guía OWASP.</p>
+<p><b>Consecuencias:</b> (+) escalado horizontal sin sesión compartida; permisos ajustables sin cambiar código. (−) un cambio de rol tarda hasta 15 min en reflejarse en tokens ya emitidos. <b>Mitigación:</b> al quitar un rol se revocan los refresh tokens del usuario; la ventana de 15 min queda documentada y aceptada.</p></div>
+
+<div class="adr"><h3>ADR-04 · Auditoría basada en eventos con patrón outbox</h3>
+<p><b>Contexto:</b> RF-12 exige registrar eventos sin perder ninguno; registrar sincrónicamente en un servicio externo podría fallar o ser lento.</p>
+<p><b>Decisión:</b> el evento se escribe en una tabla <i>outbox</i> dentro de la misma transacción de negocio; el worker lo traslada a la bitácora inmutable.</p>
+<p><b>Consecuencias:</b> (+) no puede existir una matrícula o nota sin evento; no penaliza la latencia. (−) la bitácora puede tener segundos de retraso respecto de la operación. <b>Mitigación:</b> alerta si la outbox acumula eventos sin procesar por más de 5 minutos.</p></div>
+
+<div class="adr"><h3>ADR-05 · Alta disponibilidad con redundancia activa y respaldos PITR</h3>
+<p><b>Contexto:</b> RNF-03 (99,5 %) y RNF-09 (respaldo y restauración).</p>
+<p><b>Decisión:</b> dos instancias de API en zonas distintas tras un balanceador; PostgreSQL con réplica en espera; respaldo base diario + WAL continuo a almacenamiento de objetos en otra región.</p>
+<p><b>Consecuencias:</b> (+) tolera la caída de una instancia o una zona; permite restaurar a un punto en el tiempo (por ejemplo, antes de una carga masiva de notas errónea). (−) mayor costo que un servidor único. <b>Mitigación:</b> instancias pequeñas con autoescalado y servicios administrados.</p></div>
+
+<div class="adr"><h3>ADR-06 · SPA Angular + API REST con contrato OpenAPI</h3>
+<p><b>Contexto:</b> RNF-06, RNF-08 y RNF-12: interfaz accesible y adaptable, e integración futura con otras plataformas.</p>
+<p><b>Decisión:</b> separar cliente (SPA) y servidor (API REST versionada). La misma API que usa la SPA queda disponible para integraciones.</p>
+<p><b>Consecuencias:</b> (+) un solo contrato para la interfaz y las integraciones; la SPA se sirve desde CDN. (−) la SPA requiere cuidar accesibilidad de forma explícita (gestión del foco, anuncios a lectores de pantalla). <b>Mitigación:</b> pruebas automáticas de accesibilidad en CI.</p></div>
+
+<h2>8.2 Evaluación frente a los atributos de calidad</h2>
+<table class="small">
+<thead><tr><th style="width:17%">Atributo</th><th style="width:16%">Grado de cumplimiento esperado</th><th>Argumento</th></tr></thead>
+<tr><td>Seguridad</td><td>Alto</td><td>Defensa en capas: WAF, TLS, red privada, autenticación, autorización por permiso y por propiedad, hash de contraseñas, auditoría.</td></tr>
+<tr><td>Rendimiento</td><td>Alto con margen</td><td>Estimación: 300 usuarios con una petición cada ~10 s ≈ 30 peticiones/s; con pico ×3 ≈ 90–100 peticiones/s, carga moderada para dos instancias con caché e índices. Debe confirmarse con la prueba de carga.</td></tr>
+<tr><td>Disponibilidad</td><td>Adecuado</td><td>Sin punto único de falla en la ruta principal salvo el primario de BD durante la conmutación (minutos), compatible con el margen mensual de ~3,6 h.</td></tr>
+<tr><td>Escalabilidad</td><td>Adecuado</td><td>Escalado horizontal de la API; el límite real es la base de datos de escritura (sección 8.5).</td></tr>
+<tr><td>Mantenibilidad</td><td>Alto si se respeta la disciplina modular</td><td>Depende de que las pruebas de arquitectura impidan dependencias indebidas.</td></tr>
+<tr><td>Usabilidad / accesibilidad</td><td>Medio a alto</td><td>La arquitectura lo permite; el cumplimiento real depende de la implementación de la interfaz.</td></tr>
+</table>
+
+<h2>8.3 Riesgos</h2>
+<table class="ids small">
+<thead><tr><th style="width:5%">ID</th><th style="width:30%">Riesgo</th><th style="width:7%">Prob.</th><th style="width:7%">Imp.</th><th>Mitigación / respuesta</th></tr></thead>
+<tr><td>R1</td><td>Pico de solicitudes al abrir la matrícula satura grupos populares y la base de datos.</td><td>Alta</td><td>Alto</td><td>Prueba de carga del escenario de apertura; apertura escalonada por semestre o programa; tiempo máximo de bloqueo; mensajes claros y reintento controlado.</td></tr>
+<tr><td>R2</td><td>El monolito se degrada en un «gran bola de lodo» por dependencias entre módulos.</td><td>Media</td><td>Alto</td><td>Pruebas de arquitectura obligatorias en CI; revisión de código; un esquema por módulo con permisos de BD separados.</td></tr>
+<tr><td>R3</td><td>Robo de credenciales o de tokens (phishing, XSS).</td><td>Media</td><td>Alto</td><td>Tokens de corta vida, refresh en cookie <i>HttpOnly</i>, CSP, bloqueo por intentos; recomendación de segundo factor para administradores.</td></tr>
+<tr><td>R4</td><td>Escalamiento de privilegios: un estudiante accede a datos de otro (IDOR).</td><td>Media</td><td>Alto</td><td>Verificación de propiedad en cada caso de uso; pruebas negativas automatizadas; identificadores UUID no secuenciales.</td></tr>
+<tr><td>R5</td><td>Respaldos que no restauran (nunca probados).</td><td>Media</td><td>Muy alto</td><td>Simulacro de restauración cada periodo con acta; alerta si falla el archivado de WAL.</td></tr>
+<tr><td>R6</td><td>Migración de datos desde archivos actuales con duplicados e inconsistencias.</td><td>Alta</td><td>Alto</td><td>Proyecto de migración separado: limpieza, deduplicación por documento, validación por muestreo y carga por etapas.</td></tr>
+<tr><td>R7</td><td>Modificación indebida de notas por un usuario con permisos legítimos.</td><td>Baja</td><td>Alto</td><td>Bitácora inmutable con valor anterior y nuevo; motivo obligatorio tras publicación; reportes de cambios para el coordinador.</td></tr>
+<tr><td>R8</td><td>Dependencia del proveedor de nube (lock-in) y costos crecientes.</td><td>Media</td><td>Medio</td><td>Contenedores Docker y PostgreSQL estándar, portables entre proveedores; presupuesto con alertas.</td></tr>
+<tr><td>R9</td><td>Incumplimiento de la Ley 1581 por exposición de datos en logs o reportes exportados.</td><td>Media</td><td>Alto</td><td>Enmascaramiento en logs; reportes exportados con caducidad de enlace; clasificación de datos personales.</td></tr>
+<tr><td>R10</td><td>Retraso en la bitácora (outbox) oculta acciones durante una investigación.</td><td>Baja</td><td>Medio</td><td>Alerta por eventos pendientes &gt; 5 min; los eventos ya están persistidos en la outbox aunque el worker falle.</td></tr>
+<tr><td>R11</td><td>Interbloqueos al matricular varios grupos a la vez y agotamiento del pool de conexiones por transacciones esperando bloqueos (hallazgo de la revisión con IA, sección 9.3).</td><td>Media</td><td>Alto</td><td>Una transacción por grupo o bloqueo en orden determinista; <code>lock_timeout</code> corto; límite de concurrencia por grupo; pool separado para lecturas.</td></tr>
+</table>
+
+<h2>8.4 Puntos únicos de falla y problemas de seguridad</h2>
+<ul>
+  <li><b>Base de datos primaria:</b> es el punto más sensible. La réplica en espera reduce el impacto, pero la conmutación toma de uno a dos minutos y puede perder las últimas transacciones si la replicación es asíncrona. Se recomienda replicación síncrona (más latencia de escritura, sin pérdida de datos confirmados), a validar con la prueba de carga.</li>
+  <li><b>Balanceador y CDN:</b> se usan como servicios administrados redundantes del proveedor; si se autogestionaran, serían un punto único de falla.</li>
+  <li><b>Gestor de secretos y proveedor de identidad:</b> si M1 falla, nadie puede iniciar sesión; las sesiones vigentes siguen funcionando hasta que vence el token.</li>
+  <li><b>Redis:</b> no es punto único de falla: el sistema está diseñado para funcionar sin caché, con más latencia.</li>
+  <li><b>Amenazas principales (enfoque STRIDE):</b> suplantación (credenciales robadas), manipulación (cambio de notas), repudio (negar un cambio, mitigado por auditoría), divulgación (IDOR, logs), denegación de servicio (picos de matrícula, ataques volumétricos mitigados por WAF y rate limiting) y elevación de privilegios (asignación indebida de roles, auditada en RF-12).</li>
+</ul>
+
+<h2>8.5 Límites de escalabilidad</h2>
+<p>La API escala horizontalmente casi sin límite práctico para este contexto. El límite real está en la <b>base de datos de escritura</b> (un solo primario) y, dentro de ella, en la <b>contención de bloqueos</b> sobre los grupos más demandados durante la matrícula. Si la institución creciera mucho más allá del escenario de referencia, las siguientes medidas se aplicarían en este orden: (1) más réplicas de lectura para consultas y reportes; (2) cola de solicitudes de matrícula por grupo; (3) particionar las tablas de matrícula y calificación por periodo; (4) extraer el módulo de Matrículas como servicio independiente con su propia base de datos. La arquitectura modular permite dar estos pasos sin rediseñar todo el sistema, como pide RNF-04. Las señales concretas para extraer un módulo serían: picos sostenidos de inscripción muy superiores al escenario de referencia que saturen la base de datos, un equipo que crezca a varias células independientes (más de 15 desarrolladores), o un módulo con requisitos regulatorios o de despliegue propios (por ejemplo, integración con pagos).</p>
+
+<h2>8.6 Decisiones que requieren validación adicional</h2>
+<ol>
+  <li>RPO ≤ 15 min y RTO ≤ 4 h: deben confirmarse con la institución, junto con el modo de replicación (síncrona o asíncrona).</li>
+  <li>Volumen real de usuarios y comportamiento del día de apertura de matrícula: validar con datos históricos antes de dimensionar.</li>
+  <li>Si existe un proveedor de identidad institucional (Microsoft Entra ID, Google Workspace): en ese caso, M1 delegaría la autenticación vía OIDC.</li>
+  <li>Escala de calificación y reglas de componentes por programa (S-02).</li>
+  <li>Política de retención de la bitácora de auditoría y de los respaldos frente a la normativa de datos personales.</li>
+  <li>Proveedor de nube y costo mensual estimado.</li>
+  <li>Reglas de matrícula no definidas en el enunciado: reserva temporal de cupos, turnos escalonados (por semestre o promedio) y prerrequisitos.</li>
+  <li>Copias de respaldo inmutables (WORM) y si el objetivo de RTO debe bajar a 30 min, como sugirió la revisión con IA.</li>
+</ol>
+</div>
+
+<!-- ============================ 9 ============================ -->
+<div class="section">
+<h1>9. Evidencias del uso de Google AI Studio</h1>
+
+<h2>9.1 Metodología de uso crítico</h2>
+<ol>
+  <li><b>Una conversación, un prompt por etapa:</b> los cinco prompts se ejecutaron en una misma conversación de Google AI Studio («Análisis de Sistema de Gestión», 8 de noviembre de 2026, 12:08 a 12:35 p. m.), con la opción <i>Grounding with Google Search</i> activa. Así cada respuesta podía revisarse antes de pasar a la siguiente etapa.</li>
+  <li><b>Sin datos reales:</b> no se incluyeron nombres, documentos ni credenciales reales (R-05).</li>
+  <li><b>Verificación:</b> cada respuesta se contrastó contra (a) los requerimientos del enunciado, (b) la coherencia con los demás modelos y (c) bibliografía de referencia (Bass et al., 2021; Richards &amp; Ford, 2020; OWASP Foundation, 2021).</li>
+  <li><b>Decisión explícita:</b> cada sugerencia se clasificó como <span class="tag ok">Aceptada</span>, <span class="tag mod">Modificada</span> o <span class="tag no">Descartada</span>, con su justificación (sección 9.3).</li>
+</ol>
+<div class="note"><b>Limitación detectada en el propio proceso.</b> En los prompts 1 y 5 quedó sin reemplazar el marcador <code>[pegar texto…]</code>, por lo que la IA no recibió el texto literal de los requerimientos ni el resumen de la propuesta. En el prompt 1 la herramienta no inventó requerimientos: pidió el texto y propuso la estructura del análisis (Evidencia 2). En el prompt 5 lo advirtió («Nota previa») y revisó los artefactos generados en la misma conversación. Por eso las respuestas se trataron como insumo de contraste y no como fuente de requerimientos: los RF/RNF del informe provienen únicamente del enunciado.</div>
+
+<h2>9.2 Prompts y respuestas (capturas)</h2>
+
+<h3>Prompt 1 — Análisis de requerimientos</h3>
+<div class="prompt">Actúa como arquitecto de software. Te comparto el caso de un Sistema de Gestión Académica (SGA) para una institución de educación superior y sus requerimientos RF-01 a RF-12 y RNF-01 a RNF-12 [...]. 1) Identifica actores, supuestos, restricciones y reglas de negocio. 2) Señala qué requerimientos son ambiguos o no verificables y propón un criterio de aceptación medible para cada uno. 3) Indica cuáles requerimientos condicionan más la arquitectura y por qué. Responde en tablas y no inventes requerimientos…</div>
+<div class="ev"><img src="../evidencias-ai-studio/Prompt1.png"><div class="cap"><b>Evidencia 1.</b> Prompt 1 enviado en Google AI Studio.</div></div>
+<div class="ev"><img src="../evidencias-ai-studio/RespuestaPrompt1.png"><div class="cap"><b>Evidencia 2.</b> Respuesta al Prompt 1: la IA solicita el texto del enunciado y propone la estructura del análisis.</div></div>
+
+<h3>Prompt 2 — Selección del estilo arquitectónico</h3>
+<div class="ev"><img src="../evidencias-ai-studio/Prompt2.png"><div class="cap"><b>Evidencia 3.</b> Prompt 2 y comienzo de la respuesta.</div></div>
+<div class="ev"><img src="../evidencias-ai-studio/RespuestaPrompt2.png"><div class="cap"><b>Evidencia 4.</b> Matriz comparativa: consistencia, mantenibilidad y escalabilidad.</div></div>
+<div class="ev"><img src="../evidencias-ai-studio/RespuestaPrompt2.1.png"><div class="cap"><b>Evidencia 5.</b> Matriz comparativa: disponibilidad, complejidad operativa y costo.</div></div>
+<div class="ev"><img src="../evidencias-ai-studio/RespuestaPrompt2.2.png"><div class="cap"><b>Evidencia 6.</b> Análisis del control de cupos concurrentes (actualización condicional en SQL).</div></div>
+<div class="ev"><img src="../evidencias-ai-studio/RespuestaPrompt2.3.png"><div class="cap"><b>Evidencia 7.</b> Recomendación: monolito modular y su justificación técnica.</div></div>
+<div class="ev"><img src="../evidencias-ai-studio/RespuestaPrompt2.4.png"><div class="cap"><b>Evidencia 8.</b> Evidencia que justificaría migrar a microservicios.</div></div>
+
+<h3>Prompt 3 — Modelos del sistema (Mermaid)</h3>
+<div class="ev"><img src="../evidencias-ai-studio/Prompt3.png"><div class="cap"><b>Evidencia 9.</b> Prompt 3 y comienzo de la respuesta.</div></div>
+<div class="ev"><img src="../evidencias-ai-studio/RespuestaPrompt3.png"><div class="cap"><b>Evidencia 10.</b> Diagrama de componentes generado (ilegible por su ancho).</div></div>
+<div class="ev"><img src="../evidencias-ai-studio/RespuestaPrompt3.1.png"><div class="cap"><b>Evidencia 11.</b> Modelo entidad-relación generado (incluye la entidad MatriculaDetalle).</div></div>
+<div class="ev"><img src="../evidencias-ai-studio/RespuestaPrompt3.2.png"><div class="cap"><b>Evidencia 12.</b> Secuencia de matrícula concurrente con <code>SELECT … FOR UPDATE</code> (parte 1).</div></div>
+<div class="ev"><img src="../evidencias-ai-studio/RespuestaPrompt3.3.png"><div class="cap"><b>Evidencia 13.</b> Secuencia de matrícula concurrente (parte 2): auditoría registrada después del COMMIT.</div></div>
+
+<h3>Prompt 4 — Despliegue y seguridad</h3>
+<div class="ev"><img src="../evidencias-ai-studio/Prompt4.png"><div class="cap"><b>Evidencia 14.</b> Prompt 4.</div></div>
+<div class="ev"><img src="../evidencias-ai-studio/RespuestaPrompt4.1.png"><div class="cap"><b>Evidencia 15.</b> Propuesta: una región con dos zonas de disponibilidad; topología.</div></div>
+<div class="ev"><img src="../evidencias-ai-studio/RespuestaPrompt4.2.png"><div class="cap"><b>Evidencia 16.</b> Nodos: balanceador, dos contenedores, PostgreSQL con standby síncrono, almacenamiento de objetos.</div></div>
+<div class="ev"><img src="../evidencias-ai-studio/RespuestaPrompt4..3.png"><div class="cap"><b>Evidencia 17.</b> Canales de comunicación, protocolos y puertos.</div></div>
+<div class="ev"><img src="../evidencias-ai-studio/RespuestaPrompt4..4.png"><div class="cap"><b>Evidencia 18.</b> Respaldo y restauración: RPO ≤ 5 min, RTO ≤ 30 min, PITR, copias inmutables (WORM).</div></div>
+<div class="ev"><img src="../evidencias-ai-studio/RespuestaPrompt4..5.png"><div class="cap"><b>Evidencia 19.</b> Controles de seguridad: red, cifrado, secretos y acceso administrativo con MFA.</div></div>
+<div class="ev"><img src="../evidencias-ai-studio/RespuestaPrompt4..6.png"><div class="cap"><b>Evidencia 20.</b> Puntos únicos de falla residuales.</div></div>
+
+<h3>Prompt 5 — Revisión crítica</h3>
+<div class="ev"><img src="../evidencias-ai-studio/RespuestaPrompt5.png"><div class="cap"><b>Evidencia 21.</b> Prompt 5.</div></div>
+<div class="ev"><img src="../evidencias-ai-studio/RespuestaPrompt5.1.png"><div class="cap"><b>Evidencia 22.</b> Contradicciones entre modelos detectadas por la IA.</div></div>
+<div class="ev"><img src="../evidencias-ai-studio/RespuestaPrompt5.2.png"><div class="cap"><b>Evidencia 23.</b> Límites de escalabilidad: agotamiento del pool de conexiones, base de datos compartida, auditoría síncrona.</div></div>
+<div class="ev"><img src="../evidencias-ai-studio/RespuestaPrompt5.3.png"><div class="cap"><b>Evidencia 24.</b> Riesgos de seguridad y casos de borde no cubiertos.</div></div>
+<div class="ev"><img src="../evidencias-ai-studio/RespuestaPrompt5.4.png"><div class="cap"><b>Evidencia 25.</b> Decisiones que deben validarse con la institución.</div></div>
+</div>
+
+<div class="section">
+<h2>9.3 Sugerencias aceptadas, modificadas o descartadas</h2>
+<table class="small">
+<thead><tr><th style="width:13%">Tema (evidencia)</th><th style="width:30%">Qué propuso la IA</th><th style="width:11%">Decisión</th><th>Justificación</th></tr></thead>
+<tr><td>Análisis de requerimientos (Ev. 2)</td><td>No hizo el análisis porque faltaba el texto; pidió el enunciado y propuso una estructura: tablas de actores, supuestos marcados, restricciones y reglas de negocio; criterios de aceptación SMART; requerimientos significativos para la arquitectura (ASR).</td><td><span class="tag ok">Aceptada</span></td><td>Se adoptó esa estructura en las secciones 3 y 4 (supuestos con identificador, criterio de aceptación por requerimiento, requerimientos que dirigen la arquitectura). El contenido proviene del enunciado, no de la IA.</td></tr>
+<tr><td>Estilo arquitectónico (Ev. 4–8)</td><td>Monolito modular, por el tamaño del equipo (ley de Conway), la carga de 300 usuarios y la consistencia ACID de los cupos; microservicios solo si aparecen más de 15–20 desarrolladores, picos de más de 10 000 req/s o requisitos regulatorios propios de un módulo.</td><td><span class="tag ok">Aceptada</span></td><td>Coincide con la evaluación propia de la sección 5.1, hecha con criterios del enunciado. Se acepta por esa evidencia y no por la recomendación. Los umbrales de cambio se incorporaron a la sección 8.5.</td></tr>
+<tr><td>Control de cupos (Ev. 6, 12, 13)</td><td>Dos variantes: <code>UPDATE … SET cupos = cupos − 1 WHERE cupos &gt; 0</code> (Ev. 6) y bloqueo pesimista <code>SELECT … FOR UPDATE</code> (Ev. 12).</td><td><span class="tag mod">Modificada</span></td><td>Ambas impiden el sobrecupo. Se mantiene el bloqueo explícito porque en la misma transacción también se valida la duplicidad y se escribe la auditoría; la actualización condicional se documenta como alternativa equivalente. Se agregó el índice único parcial como segunda barrera, que ninguna variante de la IA incluía.</td></tr>
+<tr><td>Auditoría en la secuencia (Ev. 13, 23)</td><td>La secuencia del prompt 3 registra el evento de auditoría después del COMMIT. En el prompt 5, la misma IA advierte que una auditoría síncrona puede abortar la matrícula y recomienda un <i>transactional outbox</i>.</td><td><span class="tag mod">Modificada</span></td><td>Registrar después del COMMIT puede perder el evento si el proceso falla entre los dos pasos (incumple RF-12). Se adopta el outbox dentro de la misma transacción (ADR-04), que es lo que la IA terminó recomendando.</td></tr>
+<tr><td>Modelo de datos (Ev. 11, 22)</td><td>Matrícula como encabezado con varias filas de MatriculaDetalle (una por asignatura).</td><td><span class="tag mod">Modificada</span></td><td>Se usa una matrícula por grupo: simplifica el índice único (RN-01) y la secuencia. La IA misma señaló (Ev. 22) que su modelo era inconsistente con su secuencia de un solo grupo. Se agregaron PlanEstudio, Permiso y Horario.</td></tr>
+<tr><td>Diagramas (Ev. 10–13)</td><td>Código Mermaid de componentes, entidad-relación y secuencia.</td><td><span class="tag mod">Modificada</span></td><td>El diagrama de componentes resultó ilegible por su ancho (Ev. 10). Los diagramas finales se rehicieron en Graphviz y Mermaid, con nombres consistentes con el resto del informe.</td></tr>
+<tr><td>Despliegue (Ev. 15–17)</td><td>Una región con dos zonas, ALB con WAF, dos contenedores, PostgreSQL con standby síncrono; calificó la arquitectura multirregión activa como antipatrón por costo.</td><td><span class="tag ok">Aceptada</span></td><td>Coincide con la figura 3. Solo los respaldos se copian a otra región; no hay multirregión activa.</td></tr>
+<tr><td>Tráfico interno (Ev. 17, 24)</td><td>El prompt 4 propone HTTP:8080 sin cifrar entre balanceador y contenedores; en el prompt 5 la IA lo señala como riesgo frente a la Ley 1581.</td><td><span class="tag mod">Modificada</span></td><td>Se cambió a TLS también en el tramo balanceador → API (re-cifrado). El costo es menor y protege datos personales en tránsito (RNF-11).</td></tr>
+<tr><td>RPO/RTO (Ev. 18)</td><td>RPO ≤ 5 min y RTO ≤ 30 min, con PITR y copias inmutables (WORM).</td><td><span class="tag mod">Modificada</span></td><td>Se adoptan las copias inmutables. Para RPO y RTO se mantienen ≤ 15 min y ≤ 4 h como compromiso verificable, porque un RTO de 30 min exige ensayos y operación que la institución debe confirmar (sección 8.6).</td></tr>
+<tr><td>Concurrencia y pool (Ev. 22, 23)</td><td>Interbloqueos si un estudiante matricula varios grupos a la vez, y agotamiento del pool de conexiones mientras esperan los bloqueos.</td><td><span class="tag ok">Aceptada</span></td><td>Hallazgo válido no cubierto antes. Se incorporó a ADR-02 y al riesgo R11: bloqueo en orden determinista por id de grupo, <code>lock_timeout</code> corto y límite de concurrencia por grupo.</td></tr>
+<tr><td>Casos de borde (Ev. 24)</td><td>Reserva temporal de cupos («carrito»), turnos de matrícula escalonados y semántica ante fallo parcial.</td><td><span class="tag mod">Modificada</span></td><td>No están en los RF del enunciado. Se definió que cada grupo se procesa de forma independiente (éxito parcial informado por asignatura); la reserva temporal y los turnos quedan como decisiones a validar (8.6).</td></tr>
+<tr><td>SLA y mantenimientos (Ev. 25)</td><td>Pregunta si el 99,5 % incluye las ventanas de mantenimiento.</td><td><span class="tag no">Descartada</span></td><td>El enunciado (RNF-03) ya excluye los mantenimientos programados e informados, así que no es un punto abierto.</td></tr>
+<tr><td>Identidad y costo (Ev. 25)</td><td>Validar si se usa SSO institucional (Entra ID / Google Workspace) y estimar el costo de nube (USD 250–450/mes).</td><td><span class="tag ok">Aceptada</span></td><td>Ya figuraban como decisiones a validar (8.6). La cifra de costo es una estimación de la IA, no verificada.</td></tr>
+</table>
+
+<h2>9.4 Lecciones sobre el uso de la IA</h2>
+<ul>
+  <li>La herramienta acelera la comparación de alternativas y los borradores, pero se contradijo a sí misma entre prompts (auditoría síncrona en el prompt 3, outbox en el prompt 5; HTTP interno en el prompt 4, TLS en el prompt 5). Revisar cada respuesta contra las demás fue indispensable.</li>
+  <li>La revisión crítica (prompt 5) fue la más valiosa: encontró dos problemas reales (interbloqueos y agotamiento del pool) que se incorporaron al diseño.</li>
+  <li>Dejar marcadores sin reemplazar en un prompt degrada la respuesta; la IA trabajó sin el texto de los requerimientos. Por eso los requerimientos del informe provienen del enunciado y no de la IA.</li>
+  <li>La responsabilidad sobre la exactitud, la coherencia y la viabilidad de la propuesta es del autor; cada decisión final tiene su propio ADR.</li>
+</ul>
+</div>
+
+<!-- ============================ 10 ============================ -->
+<div class="section">
+<h1>10. Video pitch y repositorio</h1>
+<table>
+<tr><td style="width:30%"><b>Video pitch (YouTube)</b></td><td>https://youtu.be/Ch0j0luFkEQ</td></tr>
+<tr><td><b>Repositorio</b></td><td>https://github.com/jhonnathancun/sga</td></tr>
+</table>
+<p><b>Contenido del video (5 a 7 minutos):</b> problema y objetivo (30 s); requerimientos que dirigen la arquitectura (1 min); estilo seleccionado y comparación (1 min 30 s); recorrido por componentes, despliegue y secuencia de matrícula (2 min); decisiones y riesgos principales (1 min); uso crítico de Google AI Studio y conclusiones (1 min). Presentado por el autor del trabajo.</p>
+<p><b>Contenido del repositorio:</b></p>
+<pre>sga/
+├── README.md                     Descripción, índice y enlaces
+├── informe/
+│   └── ACA_Arquitectura_SGA.pdf  Este informe
+├── diagramas/
+│   ├── 01_casos_de_uso.dot / .svg / .png
+│   ├── 02_componentes.dot  / .svg / .png
+│   ├── 03_despliegue.dot   / .svg / .png
+│   ├── 04_modelo_datos.dot  / .svg / .png
+│   ├── 05_secuencia_matricula.mmd     / .svg / .png
+│   └── 06_secuencia_calificacion.mmd  / .svg / .png
+├── adr/                          ADR-01 a ADR-06 en Markdown
+└── evidencias-ai-studio/         Capturas de prompts y respuestas</pre>
+<p class="small">Para regenerar los diagramas: <code>dot -Tsvg archivo.dot -o archivo.svg</code> (Graphviz) y <code>mmdc -i archivo.mmd -o archivo.svg</code> (Mermaid CLI).</p>
+
+<!-- ============================ 11 ============================ -->
+<h1 style="margin-top:24px">11. Conclusiones y recomendaciones</h1>
+<h2>11.1 Conclusiones</h2>
+<ul>
+  <li>Un <b>monolito modular con arquitectura limpia por módulo</b> es el estilo más adecuado para el SGA: obtuvo la mejor evaluación frente a los atributos de calidad, garantiza consistencia en matrícula y calificaciones con transacciones locales y mantiene bajo acoplamiento sin el costo operativo de los microservicios.</li>
+  <li>Los requerimientos que más condicionan el diseño son la integridad ante concurrencia (RNF-07), la seguridad y privacidad por rol (RNF-01, RNF-11), la disponibilidad (RNF-03) y la auditoría (RF-12). Cada uno tiene una decisión explícita (ADR-02 a ADR-05) y un método de verificación.</li>
+  <li>La matriz de trazabilidad cubre los 24 requerimientos; ningún componente existe sin un requerimiento que lo justifique.</li>
+  <li>El punto más crítico de la propuesta no es la API, que escala horizontalmente, sino la base de datos de escritura durante la apertura de matrícula; por eso se priorizó su prueba de carga y se definió una ruta de evolución.</li>
+  <li>Google AI Studio fue útil para explorar alternativas y producir borradores, pero varias sugerencias requirieron corrección, especialmente en concurrencia, autenticación y auditoría. El valor estuvo en verificar, no en copiar.</li>
+</ul>
+<h2>11.2 Recomendaciones</h2>
+<ol>
+  <li>Construir primero un <b>prototipo vertical</b> del flujo de matrícula (SPA → API → BD → auditoría) y ejecutar la prueba de concurrencia y de carga antes de desarrollar los demás módulos.</li>
+  <li>Incorporar desde el primer día las <b>pruebas de arquitectura</b> en la integración continua para que las fronteras entre módulos no se erosionen.</li>
+  <li>Validar con la institución los puntos de la sección 8.6, en especial RPO/RTO y la existencia de un proveedor de identidad.</li>
+  <li>Planear la <b>migración de datos</b> como un proyecto aparte, con deduplicación y validación, porque los datos actuales son la causa del problema.</li>
+  <li>Exigir <b>segundo factor de autenticación</b> para administradores y coordinadores.</li>
+  <li>Realizar un <b>simulacro de restauración</b> por periodo académico y conservar el acta como evidencia de RNF-09.</li>
+</ol>
+</div>
+
+<!-- ============================ 12 ============================ -->
+<div class="section refs">
+<h1>12. Referencias</h1>
+<p>Bass, L., Clements, P., &amp; Kazman, R. (2021). <i>Software architecture in practice</i> (4th ed.). Addison-Wesley.</p>
+<p>Brown, S. (s.f.). <i>The C4 model for visualising software architecture</i>. https://c4model.com</p>
+<p>Congreso de Colombia. (2012, 17 de octubre). <i>Ley Estatutaria 1581 de 2012, por la cual se dictan disposiciones generales para la protección de datos personales</i>. Diario Oficial No. 48.587.</p>
+<p>Fielding, R. T. (2000). <i>Architectural styles and the design of network-based software architectures</i> [Tesis doctoral, University of California, Irvine]. https://ics.uci.edu/~fielding/pubs/dissertation/top.htm</p>
+<p>Fowler, M. (2015, 3 de junio). <i>MonolithFirst</i>. martinfowler.com. https://martinfowler.com/bliki/MonolithFirst.html</p>
+<p>Google. (s.f.). <i>Google AI Studio</i>. https://aistudio.google.com</p>
+<p>International Organization for Standardization. (2023). <i>Systems and software engineering — Systems and software Quality Requirements and Evaluation (SQuaRE) — Product quality model</i> (ISO/IEC 25010:2023).</p>
+<p>International Organization for Standardization. (2022). <i>Software, systems and enterprise — Architecture description</i> (ISO/IEC/IEEE 42010:2022).</p>
+<p>Martin, R. C. (2017). <i>Clean architecture: A craftsman’s guide to software structure and design</i>. Prentice Hall.</p>
+<p>Newman, S. (2019). <i>Monolith to microservices: Evolutionary patterns to transform your monolith</i>. O’Reilly Media.</p>
+<p>OWASP Foundation. (2021). <i>OWASP Application Security Verification Standard 4.0.3</i>. https://owasp.org/www-project-application-security-verification-standard/</p>
+<p>OWASP Foundation. (s.f.). <i>Password storage cheat sheet</i>. OWASP Cheat Sheet Series. https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html</p>
+<p>PostgreSQL Global Development Group. (s.f.). <i>Continuous archiving and point-in-time recovery (PITR)</i>. PostgreSQL documentation. https://www.postgresql.org/docs/current/continuous-archiving.html</p>
+<p>Richards, M., &amp; Ford, N. (2020). <i>Fundamentals of software architecture: An engineering approach</i>. O’Reilly Media.</p>
+<p>Sommerville, I. (2011). <i>Ingeniería de software</i> (9.ª ed.). Pearson Educación.</p>
+<p>World Wide Web Consortium. (2023). <i>Web Content Accessibility Guidelines (WCAG) 2.2</i>. https://www.w3.org/TR/WCAG22/</p>
+</div>
+
+</body>
+</html>

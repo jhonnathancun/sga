@@ -1,0 +1,45 @@
+%% Diagrama 5. Secuencia: matrícula de un estudiante en un grupo
+sequenceDiagram
+    autonumber
+    actor E as Estudiante / Coordinador
+    participant UI as SPA (Angular)
+    participant MW as Middleware API<br/>(JWT + RBAC)
+    participant MC as MatriculasController
+    participant MS as Servicio de Matrículas
+    participant OQ as IOfertaQuery<br/>(módulo Oferta)
+    participant DB as PostgreSQL
+    participant BUS as Bus de eventos<br/>(outbox)
+    participant AU as Módulo Auditoría
+
+    E->>UI: Selecciona grupo y confirma
+    UI->>MW: POST /api/v1/matriculas {estudianteId, grupoId}<br/>Authorization: Bearer JWT, Idempotency-Key
+    MW->>MW: Valida token, rol y permiso "matricula.crear"<br/>(estudiante solo puede matricularse a sí mismo)
+    alt Token inválido o sin permiso
+        MW-->>UI: 401 / 403
+    end
+    MW->>MC: Petición autorizada
+    MC->>MS: Matricular(cmd)
+    MS->>OQ: ObtenerGrupo(grupoId)
+    OQ-->>MS: Grupo, periodo abierto, asignatura
+    MS->>DB: BEGIN TRANSACTION
+    MS->>DB: SELECT ... FROM grupo WHERE id = :grupoId FOR UPDATE
+    DB-->>MS: cupo_maximo, cupos_ocupados
+    MS->>DB: ¿Existe matrícula activa (estudiante, asignatura, periodo)?
+    DB-->>MS: Resultado
+    alt Sin cupo o matrícula duplicada
+        MS->>DB: ROLLBACK
+        MS-->>MC: Error de regla de negocio
+        MC-->>UI: 409 Conflict (problem+json)
+        UI-->>E: Mensaje claro: "Grupo sin cupo" / "Ya matriculado"
+    else Reglas válidas
+        MS->>DB: INSERT matricula (índice único parcial como 2.ª barrera)
+        MS->>DB: UPDATE grupo SET cupos_ocupados = cupos_ocupados + 1
+        MS->>DB: INSERT outbox (evento MatriculaRegistrada)
+        MS->>DB: COMMIT
+        MS-->>MC: MatriculaDto
+        MC-->>UI: 201 Created + Location
+        UI-->>E: Confirmación y horario actualizado
+        BUS->>DB: Lee outbox pendiente
+        BUS->>AU: MatriculaRegistrada(usuario, fecha, registro)
+        AU->>DB: INSERT evento_auditoria
+    end

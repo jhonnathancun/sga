@@ -1,0 +1,49 @@
+// Diagrama 1. Modelo de casos de uso del SGA (Graphviz)
+digraph UC {
+  graph [rankdir=LR, fontname="Arial", fontsize=13, nodesep=0.18, ranksep=1.1, pad=0.3, bgcolor=white, newrank=true];
+  node  [fontname="Arial", fontsize=12];
+  edge  [fontname="Arial", fontsize=10, arrowhead=none, color="#555555"];
+
+  node [shape=box, style="rounded,filled", fillcolor="#fff7e6", color="#b8860b", penwidth=1.5, width=1.6];
+  ADM [label=<«actor»<br/><b>Administrador</b>>];
+  COO [label=<«actor»<br/><b>Coordinador<br/>académico</b>>];
+  DOC [label=<«actor»<br/><b>Docente</b>>];
+  EST [label=<«actor»<br/><b>Estudiante</b>>];
+
+  subgraph cluster_sga {
+    label=<<b>Sistema de Gestión Académica (SGA)</b>>; style="dashed,rounded"; color="#2f5597"; fontcolor="#2f5597";
+    node [shape=ellipse, style=filled, fillcolor="#eef4ff", color="#2f5597", penwidth=1.2, width=3.1];
+    UC01 [label="UC-01 Iniciar / cerrar sesión"];
+    UC02 [label="UC-02 Gestionar usuarios, roles y permisos"];
+    UC03 [label="UC-03 Gestionar estudiantes"];
+    UC04 [label="UC-04 Gestionar docentes"];
+    UC13 [label="UC-13 Consultar bitácora de auditoría"];
+    UC11 [label="UC-11 Generar reportes"];
+    UC12 [label="UC-12 Buscar y filtrar registros"];
+    UC05 [label="UC-05 Gestionar programas, planes y asignaturas"];
+    UC06 [label="UC-06 Configurar periodos, grupos y horarios"];
+    UC07 [label="UC-07 Matricular estudiante"];
+    UC08 [label="UC-08 Registrar / actualizar calificaciones"];
+    UC09 [label="UC-09 Publicar calificaciones"];
+    UC10 [label="UC-10 Consultar asignaturas, horario y notas"];
+    node [fillcolor="#eeeeee", style="filled,dashed", width=2.4];
+    UC14 [label="UC-14 Registrar evento\nde auditoría"];
+    UC15 [label="UC-15 Validar cupo\ny duplicidad"];
+  }
+
+  {rank=same; ADM; COO; DOC; EST;}
+  {rank=same; UC14; UC15;}
+
+  ADM -> {UC01 UC02 UC03 UC04 UC11 UC12 UC13};
+  COO -> {UC01 UC05 UC06 UC07 UC11 UC12};
+  DOC -> {UC01 UC08 UC09 UC12};
+  EST -> {UC01 UC07 UC10};
+
+  edge [style=dashed, arrowhead=vee, color="#2f5597", fontcolor="#2f5597"];
+  UC07 -> UC15 [label="«include»"];
+  UC07 -> UC14 [label="«include»"];
+  UC08 -> UC14 [label="«include»"];
+  UC02 -> UC14 [label="«include»"];
+  UC01 -> UC14 [label="«include»"];
+  UC09 -> UC08 [label="«extend»", constraint=false];
+}

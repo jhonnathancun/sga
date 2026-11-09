@@ -1,0 +1,74 @@
+// Diagrama 2. Vista lógica / componentes — monolito modular en capas (Graphviz)
+digraph COMP {
+  graph [rankdir=TB, fontname="Arial", fontsize=13, nodesep=0.25, ranksep=0.55, pad=0.3, compound=true, bgcolor=white];
+  node  [fontname="Arial", fontsize=11, shape=box, style="rounded,filled", penwidth=1.2];
+  edge  [fontname="Arial", fontsize=9.5, color="#444444", arrowsize=0.7];
+
+  subgraph cluster_fe {
+    label=<<b>Cliente web — SPA Angular</b> (responsive, WCAG 2.2 AA)>; style=rounded; color="#2e7d32"; bgcolor="#f6fbf6";
+    SPA [fillcolor="#e8f5e9", color="#2e7d32", label=<<b>Vistas por rol</b><br/>Login · Administración · Gestión académica · Matrícula<br/>Calificaciones · Portal estudiante · Reportes y auditoría<br/><font point-size="9">Guards de ruta por rol · interceptor HTTP (token) · servicios API tipados</font>>];
+  }
+
+  subgraph cluster_api {
+    label=<<b>Backend — API REST /api/v1 (ASP.NET Core) · contrato OpenAPI</b>>; style=rounded; color="#2f5597"; bgcolor="#fafcff";
+
+    subgraph cluster_pres {
+      label="Capa de presentación y transversales"; style="rounded,dashed"; color="#888888";
+      CTRL [fillcolor="#fff7e6", color="#b8860b", label=<<b>Controladores REST</b><br/><font point-size="9">DTOs, versionado, problem+json</font>>];
+      MW   [fillcolor="#fff7e6", color="#b8860b", label=<<b>Pipeline de middleware</b><br/><font point-size="9">HTTPS/HSTS · autenticación JWT · autorización RBAC por políticas<br/>validación · rate limiting · errores · correlation-id</font>>];
+    }
+
+    subgraph cluster_mod {
+      label="Módulos de negocio (aplicación + dominio) — cada uno expone una interfaz pública";
+      style="rounded,dashed"; color="#888888";
+      node [fillcolor="#eef4ff", color="#2f5597"];
+      IAM [label=<<b>M1 Identidad y Acceso</b><br/><font point-size="9">usuarios, roles, permisos,<br/>login, refresh token</font>>];
+      PER [label=<<b>M2 Personas</b><br/><font point-size="9">estudiantes, docentes</font>>];
+      CAT [label=<<b>M3 Catálogo académico</b><br/><font point-size="9">programas, planes,<br/>asignaturas</font>>];
+      OFE [label=<<b>M4 Oferta académica</b><br/><font point-size="9">periodos, grupos, cupos,<br/>horarios, aulas/enlaces</font>>];
+      MAT [label=<<b>M5 Matrículas</b><br/><font point-size="9">cupo, duplicidad,<br/>transacción</font>>];
+      CAL [label=<<b>M6 Calificaciones</b><br/><font point-size="9">registro, publicación,<br/>control de versión</font>>];
+      REP [label=<<b>M7 Reportes</b><br/><font point-size="9">consultas de solo lectura,<br/>filtros, exportación</font>>];
+      AUD [label=<<b>M8 Auditoría</b><br/><font point-size="9">bitácora append-only</font>>];
+      {rank=same; IAM; PER; CAT; OFE;}
+      {rank=same; MAT; CAL; REP; AUD;}
+      IAM -> MAT [style=invis]; CAT -> REP [style=invis];
+    }
+
+    subgraph cluster_inf {
+      label="Capa de infraestructura (adaptadores)"; style="rounded,dashed"; color="#888888";
+      node [fillcolor="#fff7e6", color="#b8860b"];
+      REPO [label=<<b>Repositorios + Unit of Work</b><br/><font point-size="9">EF Core</font>>];
+      BUS  [label=<<b>Bus de eventos interno</b><br/><font point-size="9">patrón outbox</font>>];
+      CACHE[label=<<b>Adaptador de caché</b>>];
+      EXP  [label=<<b>Exportador PDF/CSV</b>>];
+    }
+  }
+
+  node [shape=cylinder, style=filled, fillcolor="#f3e5f5", color="#6a1b9a"];
+  DB  [label=<<b>PostgreSQL</b><br/><font point-size="9">un esquema por módulo</font>>];
+  RED [label=<<b>Redis</b><br/><font point-size="9">caché / rate limit</font>>];
+  OBJ [label=<<b>Almacenamiento de objetos</b><br/><font point-size="9">reportes y respaldos</font>>];
+
+
+  // orden vertical de capas
+  MW -> IAM [style=invis]; MW -> CAT [style=invis];
+  MAT -> REPO [style=invis]; REP -> BUS [style=invis]; AUD -> CACHE [style=invis]; CAL -> EXP [style=invis];
+  SPA -> CTRL [label=" HTTPS + JSON\n Bearer JWT"];
+  CTRL -> MW [label=" pasa por"];
+  MW -> PER [lhead=cluster_mod, label=" invoca casos de uso"];
+
+  edge [color="#2f5597", fontcolor="#2f5597"];
+  MAT -> OFE [label="IOfertaQuery"];
+  MAT -> PER [label="IPersonaQuery"];
+  CAL -> MAT [label="IMatriculaQuery"];
+  OFE -> CAT [label="ICatalogoQuery", constraint=false];
+  REP -> OFE [style=dashed, label="lectura"];
+
+  edge [color="#b8860b", fontcolor="#8a6d00"];
+  CAL -> REPO [ltail=cluster_mod, lhead=cluster_inf, label=" persistencia y\n eventos de dominio"];
+  BUS -> AUD [style=dashed, constraint=false, label="MatriculaRegistrada,\nCalificacionModificada,\nRolCambiado, Login"];
+
+  edge [color="#6a1b9a", fontcolor="#6a1b9a"];
+  REPO -> DB; CACHE -> RED; EXP -> OBJ;
+}

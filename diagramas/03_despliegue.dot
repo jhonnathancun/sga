@@ -1,0 +1,53 @@
+// Diagrama 3. Modelo de despliegue (Graphviz)
+digraph DEP {
+  graph [rankdir=TB, fontname="Arial", fontsize=13, nodesep=0.35, ranksep=0.6, pad=0.3, compound=true, bgcolor=white, newrank=true];
+  node  [fontname="Arial", fontsize=11, shape=box3d, style=filled, penwidth=1.2];
+  edge  [fontname="Arial", fontsize=9.5, color="#444444", arrowsize=0.7];
+
+  U [fillcolor="#ede7f6", color="#5e35b1", label=<«dispositivo»<br/><b>Navegador web</b><br/><font point-size="9">PC / móvil, versiones recientes</font>>];
+
+  subgraph cluster_edge {
+    label=<<b>Zona pública (borde)</b>>; style=rounded; color="#2e7d32"; bgcolor="#f6fbf6";
+    CDN [fillcolor="#e8f5e9", color="#2e7d32", label=<«servicio»<br/><b>CDN + WAF</b><br/><font point-size="9">sirve la SPA estática · reglas OWASP<br/>mitigación DDoS · HSTS</font>>];
+    LB  [fillcolor="#e8f5e9", color="#2e7d32", label=<«nodo»<br/><b>Balanceador L7</b><br/><font point-size="9">terminación TLS 1.2+ · health checks</font>>];
+  }
+
+  subgraph cluster_app {
+    label=<<b>Red privada — capa de aplicación</b> (2 zonas de disponibilidad, autoescalado)>; style=rounded; color="#2f5597"; bgcolor="#fafcff";
+    node [fillcolor="#eef4ff", color="#2f5597"];
+    API1 [label=<«contenedor Docker»<br/><b>API SGA — instancia A</b><br/><font point-size="9">ASP.NET Core · sin estado</font>>];
+    API2 [label=<«contenedor Docker»<br/><b>API SGA — instancia B</b><br/><font point-size="9">ASP.NET Core · sin estado</font>>];
+    WRK  [label=<«contenedor Docker»<br/><b>Worker</b><br/><font point-size="9">outbox · reportes pesados<br/>tareas programadas</font>>];
+  }
+
+  subgraph cluster_data {
+    label=<<b>Red privada — capa de datos</b> (sin acceso desde Internet)>; style=rounded; color="#6a1b9a"; bgcolor="#fcf8fd";
+    node [shape=cylinder, fillcolor="#f3e5f5", color="#6a1b9a"];
+    PG1 [label=<<b>PostgreSQL primario</b><br/><font point-size="9">cifrado en reposo · zona A</font>>];
+    PG2 [label=<<b>PostgreSQL réplica</b><br/><font point-size="9">standby en caliente · zona B<br/>lecturas de reportes</font>>];
+    RD  [label=<<b>Redis</b><br/><font point-size="9">caché · rate limit</font>>];
+  }
+
+  subgraph cluster_ops {
+    label=<<b>Servicios complementarios</b>>; style=rounded; color="#b8860b"; bgcolor="#fffcf5";
+    node [fillcolor="#fff7e6", color="#b8860b"];
+    OBJ [shape=cylinder, label=<<b>Almacenamiento de objetos</b><br/><font point-size="9">backups cifrados · versionado<br/>copia en otra región</font>>];
+    SEC [label=<«servicio»<br/><b>Gestor de secretos</b><br/><font point-size="9">cadenas de conexión, llaves JWT</font>>];
+    MON [label=<«servicio»<br/><b>Observabilidad</b><br/><font point-size="9">logs, métricas, trazas, alertas</font>>];
+    SMTP[label=<«servicio»<br/><b>Correo SMTP</b><br/><font point-size="9">notificaciones</font>>];
+  }
+
+  U -> CDN [label=" HTTPS 443"];
+  CDN -> LB [label=" HTTPS 443 /api/*"];
+  LB -> API1 [label=" HTTPS interno\n (TLS, red privada)"];
+  LB -> API2;
+  API1 -> PG1 [label=" TCP 5432 TLS"];
+  API2 -> PG1;
+  API1 -> RD  [label=" TCP 6379 TLS"];
+  API2 -> RD;
+  WRK -> PG2 [label=" lectura"];
+  WRK -> PG1;
+  PG1 -> PG2 [label=" replicación\n streaming", constraint=false, color="#6a1b9a", fontcolor="#6a1b9a"];
+  PG1 -> OBJ [label=" backup base diario\n + WAL continuo (PITR)", color="#6a1b9a", fontcolor="#6a1b9a"];
+  API2 -> SEC [ltail=cluster_app, lhead=cluster_ops, style=dashed, label=" secretos · telemetría (OpenTelemetry) · SMTP TLS 587"];
+}

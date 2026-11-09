@@ -1,0 +1,29 @@
+%% Diagrama 6. Secuencia: registro / actualización de una calificación
+sequenceDiagram
+    autonumber
+    actor D as Docente
+    participant UI as SPA (Angular)
+    participant MW as Middleware API<br/>(JWT + RBAC)
+    participant CS as Servicio de Calificaciones
+    participant MQ as IMatriculaQuery
+    participant DB as PostgreSQL
+    participant AU as Auditoría (vía outbox)
+
+    D->>UI: Ingresa nota de un componente
+    UI->>MW: PUT /api/v1/grupos/{g}/calificaciones/{id}<br/>{nota, version}
+    MW->>MW: Valida rol DOCENTE y permiso "calificacion.editar"
+    MW->>CS: RegistrarNota(cmd)
+    CS->>MQ: ¿El docente dicta el grupo g y la matrícula está activa?
+    MQ-->>CS: Sí / No
+    alt No es su grupo, periodo cerrado o nota fuera de rango
+        CS-->>UI: 403 / 422 con detalle
+    else Válido
+        CS->>DB: UPDATE calificacion SET nota, version = version + 1<br/>WHERE id = :id AND version = :version
+        alt 0 filas afectadas (otro usuario modificó)
+            CS-->>UI: 409 Conflict — recargar y reintentar
+        else 1 fila
+            CS->>DB: INSERT outbox CalificacionModificada (antes/después)
+            CS-->>UI: 200 OK
+            CS-)AU: CalificacionModificada (asíncrono, se registra en bitácora)
+        end
+    end
